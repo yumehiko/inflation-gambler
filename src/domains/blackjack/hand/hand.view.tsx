@@ -42,10 +42,10 @@ export const HandView: FC<HandViewProps> = ({ hand, label }) => {
 
       <div className={styles.status}>
         <div className={styles.value}>{getValueDisplay(hand)}</div>
-        {isBlackjack && !hand.cards.some(card => card.faceUp === false) && (
+        {isBlackjack && !hasHiddenCards && (
           <div className={styles.blackjack}>ブラックジャック!</div>
         )}
-        {isBust && !hand.cards.some(card => card.faceUp === false) && (
+        {isBust && !hasHiddenCards && (
           <div className={styles.bust}>バースト!</div>
         )}
       </div>
