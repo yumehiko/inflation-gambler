@@ -1,4 +1,4 @@
-# React Web Template - AI Agent Guidelines
+# Inflation Gambler - AI Agent Guidelines
 
 ## Critical Rules
 
