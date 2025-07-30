@@ -99,3 +99,23 @@ export const Aces: Story = {
     card: { suit: 'hearts', rank: 'A' },
   },
 }
+
+export const FaceDown: Story = {
+  args: {
+    card: { suit: 'hearts', rank: 'A', faceUp: false },
+  },
+}
+
+export const FaceUpAndFaceDown: Story = {
+  render: () => (
+    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+      <CardView card={{ suit: 'hearts', rank: 'K', faceUp: true }} />
+      <CardView card={{ suit: 'spades', rank: 'A', faceUp: false }} />
+      <CardView card={{ suit: 'diamonds', rank: 'Q' }} />
+      <CardView card={{ suit: 'clubs', rank: '10', faceUp: false }} />
+    </div>
+  ),
+  args: {
+    card: { suit: 'hearts', rank: 'A' },
+  },
+}

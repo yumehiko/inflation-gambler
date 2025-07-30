@@ -13,6 +13,19 @@ const suitSymbols = {
 } as const
 
 export function CardView({ card }: CardProps) {
+  const isFaceUp = card.faceUp !== false
+  
+  if (!isFaceUp) {
+    return (
+      <div 
+        className={`${styles.card} ${styles.faceDown}`}
+        aria-label="Face down card"
+      >
+        <div className={styles.cardBack}></div>
+      </div>
+    )
+  }
+  
   const isRed = card.suit === 'hearts' || card.suit === 'diamonds'
   const suitClass = isRed ? styles.red : styles.black
 

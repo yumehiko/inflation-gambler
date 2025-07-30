@@ -5,4 +5,5 @@ export type Rank = 'A' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 
 export type Card = {
   suit: Suit;
   rank: Rank;
+  faceUp?: boolean;
 };

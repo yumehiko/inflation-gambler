@@ -1,0 +1,61 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.label {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.cards {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.noCards {
+  color: #999;
+  font-style: italic;
+}
+
+.hearts,
+.diamonds {
+  color: #e74c3c;
+}
+
+.clubs,
+.spades {
+  color: #2c3e50;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.blackjack {
+  color: #27ae60;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.bust {
+  color: #e74c3c;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
