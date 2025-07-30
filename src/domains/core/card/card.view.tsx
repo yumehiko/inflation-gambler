@@ -13,7 +13,7 @@ const suitSymbols = {
 } as const
 
 export function CardView({ card }: CardProps) {
-  const isFaceUp = card.faceUp !== false
+  const isFaceUp = card.faceUp === undefined || card.faceUp === true
   
   if (!isFaceUp) {
     return (
