@@ -1,4 +1,4 @@
-import { Card, Rank } from '../../core/card/card.types';
+import { Card, Rank, isFaceUp } from '../../core/card/card.types';
 import { Hand } from './hand.types';
 
 const BLACKJACK_VALUE = 21;
@@ -99,6 +99,6 @@ export const addCardToHand = (hand: Hand, card: Card): Hand => {
 };
 
 export const calculateVisibleValue = (cards: Card[]): number => {
-  const visibleCards = cards.filter(card => card.faceUp);
+  const visibleCards = cards.filter(isFaceUp);
   return calculateHandValue(visibleCards);
 };

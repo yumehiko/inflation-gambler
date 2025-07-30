@@ -1,4 +1,5 @@
 import type { Card } from './card.types'
+import { isFaceUp } from './card.types'
 import styles from './card.module.css'
 
 type CardProps = {
@@ -13,9 +14,8 @@ const suitSymbols = {
 } as const
 
 export function CardView({ card }: CardProps) {
-  const isFaceUp = card.faceUp === undefined || card.faceUp === true
   
-  if (!isFaceUp) {
+  if (!isFaceUp(card)) {
     return (
       <div 
         className={`${styles.card} ${styles.faceDown}`}

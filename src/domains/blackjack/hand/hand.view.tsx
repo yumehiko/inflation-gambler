@@ -25,6 +25,7 @@ const getValueDisplay = (hand: Hand): string => {
 
 export const HandView: FC<HandViewProps> = ({ hand, label }) => {
   const { cards, isBust, isBlackjack } = hand;
+  const hasHiddenCards = cards.some(card => card.faceUp === false);
 
   return (
     <div className={styles.container}>
