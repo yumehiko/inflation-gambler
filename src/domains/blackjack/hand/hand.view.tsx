@@ -35,7 +35,7 @@ export const HandView: FC<HandViewProps> = ({ hand, label }) => {
           <div className={styles.noCards}>カードなし</div>
         ) : (
           cards.map((card, index) => (
-            <CardView key={index} card={card} />
+            <CardView key={`${card.suit}-${card.rank}-${index}`} card={card} />
           ))
         )}
       </div>
