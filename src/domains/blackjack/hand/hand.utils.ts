@@ -99,6 +99,6 @@ export const addCardToHand = (hand: Hand, card: Card): Hand => {
 };
 
 export const calculateVisibleValue = (cards: Card[]): number => {
-  const visibleCards = cards.filter(card => card.faceUp !== false);
+  const visibleCards = cards.filter(card => card.faceUp);
   return calculateHandValue(visibleCards);
 };
