@@ -68,7 +68,7 @@ export const useParticipantStore = create<ParticipantState>((set, get) => ({
   updateParticipantHand: (id, hand) => {
     const participant = get().getParticipantById(id);
     if (!participant) {
-      return;
+      throw new Error(`Participant with id ${id} not found`);
     }
 
     const updated = { ...participant, hand };
@@ -78,7 +78,7 @@ export const useParticipantStore = create<ParticipantState>((set, get) => ({
   updateParticipantStatus: (id, status) => {
     const participant = get().getParticipantById(id);
     if (!participant) {
-      return;
+      throw new Error(`Participant with id ${id} not found`);
     }
 
     const updated = updateStatusUtil(participant, status);
@@ -88,7 +88,7 @@ export const useParticipantStore = create<ParticipantState>((set, get) => ({
   clearParticipantHand: (id) => {
     const participant = get().getParticipantById(id);
     if (!participant) {
-      return;
+      throw new Error(`Participant with id ${id} not found`);
     }
 
     const updated = clearHandUtil(participant);

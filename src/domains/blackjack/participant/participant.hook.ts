@@ -1,5 +1,5 @@
 import { useParticipantStore } from "./participant.store";
-import type { ParticipantAction } from "./participant.types";
+import type { ParticipantAction, ParticipantStatus } from "./participant.types";
 import { 
   canPlaceBet as canPlaceBetUtil,
   canPerformAction as canPerformActionUtil,
@@ -36,6 +36,15 @@ export const useParticipant = () => {
     return canPerformActionUtil(participant, action);
   };
 
+  const safeUpdateParticipantStatus = (participantId: string, status: ParticipantStatus) => {
+    try {
+      updateParticipantStatus(participantId, status);
+    } catch (error) {
+      // Silent fail for hook layer to maintain backward compatibility
+      console.warn(error);
+    }
+  };
+
   return {
     participants,
     activeParticipants: getActiveParticipants(),
@@ -44,7 +53,7 @@ export const useParticipant = () => {
     updateParticipant,
     placeBet,
     updateParticipantHand,
-    updateParticipantStatus,
+    updateParticipantStatus: safeUpdateParticipantStatus,
     clearParticipantHand,
     getParticipantById,
     canPlaceBet,
