@@ -59,3 +59,26 @@ Always use appropriate suffixes to clarify file responsibilities:
 - `.stories.tsx` - Storybook stories
 - `.test.ts(x)` - Test files
 - `.module.css` - CSS Modules
+
+## Code Navigation and Editing with Serena MCP
+
+### ALWAYS use Serena MCP for efficient code exploration
+- Use `find_symbol` and `get_symbols_overview` instead of reading entire files
+- Navigate code by symbols (functions, classes, methods) rather than line-by-line reading
+- Only read symbol bodies when necessary for the task
+
+### Symbol-based editing approach
+- Use `replace_symbol_body` for modifying entire functions/classes
+- Use `insert_before_symbol` for adding imports at file start
+- Use `insert_after_symbol` for adding new code after existing symbols
+- Use `find_referencing_symbols` to check dependencies before breaking changes
+
+### Regex-based editing for precise changes
+- Use `replace_regex` for small, targeted modifications within symbols
+- Utilize wildcards (.*?) for efficient pattern matching
+- Avoid reading entire files just to make small edits
+
+### Best practices
+- Search for symbols first, then read only what's needed
+- Use memory files to store and recall project-specific knowledge
+- Batch related operations for efficiency

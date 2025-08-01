@@ -55,3 +55,6 @@ Thumbs.db
 
 # Storybook build info
 build-storybook.log
+
+# Serena MCP cache
+.serena/cache/
