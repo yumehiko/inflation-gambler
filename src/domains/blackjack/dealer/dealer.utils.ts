@@ -19,7 +19,9 @@ export const shouldHit = (hand: Hand): boolean => {
     return true;
   }
   
-  if (hand.value === DEALER_STAND_VALUE && hand.softValue !== undefined) {
+  // ソフト17の判定: 値が17で、softValueが存在し、softValueがvalueより小さい場合
+  // これはエースを11として数えて17になっていることを示す
+  if (hand.value === DEALER_STAND_VALUE && hand.softValue !== undefined && hand.softValue < hand.value) {
     return true;
   }
   
