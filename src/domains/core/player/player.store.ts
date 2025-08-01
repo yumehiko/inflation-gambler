@@ -28,6 +28,6 @@ export const usePlayerStore = create<PlayerStore>((set) => ({
     
   reset: () =>
     set(() => ({
-      player: initialPlayer,
+      player: createPlayer("Player", createCoin(100)),
     })),
 }));
