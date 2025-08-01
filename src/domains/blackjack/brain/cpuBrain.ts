@@ -1,0 +1,124 @@
+import type { Brain, BrainType, Decision, DecisionContext } from './brain.types';
+import { getBasicStrategyDecision } from './basicStrategy';
+import { getAvailableDecisions } from './brain.utils';
+
+/**
+ * Creates an easy CPU brain that makes random but somewhat sensible decisions
+ */
+export const createEasyCpuBrain = (): Brain => ({
+  type: 'cpu-easy',
+  makeDecision: (context: DecisionContext): Decision => {
+    const availableDecisions = getAvailableDecisions(context);
+    
+    // Bias towards safe plays based on hand value
+    if (context.hand.value >= 19) {
+      // Strong bias towards standing on good hands
+      const weights = availableDecisions.map(d => d === 'stand' ? 20 : 1);
+      return weightedRandomChoice(availableDecisions, weights);
+    } else if (context.hand.value <= 11) {
+      // Bias towards hitting on low hands
+      const weights = availableDecisions.map(d => {
+        if (d === 'hit') return 5;
+        if (d === 'double') return 2;
+        return 1;
+      });
+      return weightedRandomChoice(availableDecisions, weights);
+    }
+    
+    // Random choice for middle values
+    return availableDecisions[Math.floor(Math.random() * availableDecisions.length)];
+  },
+});
+
+/**
+ * Creates a normal CPU brain that follows basic strategy
+ */
+export const createNormalCpuBrain = (): Brain => ({
+  type: 'cpu-normal',
+  makeDecision: (context: DecisionContext): Decision => {
+    return getBasicStrategyDecision(context);
+  },
+});
+
+/**
+ * Creates a hard CPU brain that uses card counting hints and deviations
+ */
+export const createHardCpuBrain = (): Brain => ({
+  type: 'cpu-hard',
+  makeDecision: (context: DecisionContext): Decision => {
+    // Simulate card counting with random value (in real game, this would track actual cards)
+    const count = Math.random() * 2 - 1; // Range from -1 to 1
+    
+    // High positive count means deck is rich in high cards (10s and Aces)
+    // Negative count means deck is rich in low cards
+    
+    // Insurance deviation: take insurance with very high count
+    if (context.canInsurance && count > 0.8) {
+      return 'insurance';
+    }
+    
+    // 16 vs 10 deviation: stand with positive count
+    if (context.hand.value === 16 && 
+        context.dealerUpCard.rank === '10' && 
+        count > 0.3 &&
+        !context.hand.softValue) {
+      if (context.canSurrender && count > 0.5) {
+        return 'surrender';
+      }
+      return 'stand';
+    }
+    
+    // 12 vs 3 deviation: hit with negative count
+    if (context.hand.value === 12 && 
+        context.dealerUpCard.rank === '3' && 
+        count < -0.3 &&
+        !context.hand.softValue) {
+      return 'hit';
+    }
+    
+    // 10 vs 10 deviation: double with high count
+    if (context.hand.value === 10 && 
+        context.dealerUpCard.rank === '10' && 
+        count > 0.6 &&
+        context.canDouble) {
+      return 'double';
+    }
+    
+    // Otherwise follow basic strategy
+    return getBasicStrategyDecision(context);
+  },
+});
+
+/**
+ * Factory function to create CPU brains
+ */
+export const createCpuBrain = (type: BrainType): Brain => {
+  switch (type) {
+    case 'cpu-easy':
+      return createEasyCpuBrain();
+    case 'cpu-normal':
+      return createNormalCpuBrain();
+    case 'cpu-hard':
+      return createHardCpuBrain();
+    default:
+      throw new Error(`Invalid CPU brain type: ${type}`);
+  }
+};
+
+/**
+ * Helper function for weighted random choice
+ */
+const weightedRandomChoice = <T>(choices: T[], weights: number[]): T => {
+  const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+  let random = Math.random() * totalWeight;
+  
+  for (let i = 0; i < choices.length; i++) {
+    random -= weights[i];
+    if (random <= 0) {
+      return choices[i];
+    }
+  }
+  
+  // Fallback to last choice
+  return choices[choices.length - 1];
+};
