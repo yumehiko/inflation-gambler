@@ -125,10 +125,10 @@ describe("participant.hook", () => {
       expect(result.current.canPerformAction("nonexistent", "hit")).toBe(false);
       
       act(() => {
-        result.current.updateParticipantStatus("nonexistent", "bust");
+        const updateResult = result.current.updateParticipantStatus("nonexistent", "bust");
+        expect(updateResult).toBe(false);
       });
       
-      // Should not throw
       expect(result.current.participants).toHaveLength(0);
     });
   });

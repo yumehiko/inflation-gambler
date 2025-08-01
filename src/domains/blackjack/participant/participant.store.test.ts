@@ -166,6 +166,14 @@ describe("participant.store", () => {
       const participant = useParticipantStore.getState().participants[0];
       expect(participant.status).toBe("bust");
     });
+
+    it("should return false if participant not found", () => {
+      const store = useParticipantStore.getState();
+      
+      const result = store.updateParticipantStatus("nonexistent", "bust");
+      
+      expect(result).toBe(false);
+    });
   });
 
   describe("clearParticipantHand", () => {

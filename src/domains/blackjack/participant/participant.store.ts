@@ -24,7 +24,7 @@ type ParticipantState = {
   updateParticipant: (id: string, participant: Participant) => void;
   placeBet: (id: string, amount: number) => void;
   updateParticipantHand: (id: string, hand: Hand) => void;
-  updateParticipantStatus: (id: string, status: ParticipantStatus) => void;
+  updateParticipantStatus: (id: string, status: ParticipantStatus) => boolean;
   clearParticipantHand: (id: string) => void;
   getParticipantById: (id: string) => Participant | undefined;
   getActiveParticipants: () => Participant[];
@@ -78,11 +78,12 @@ export const useParticipantStore = create<ParticipantState>((set, get) => ({
   updateParticipantStatus: (id, status) => {
     const participant = get().getParticipantById(id);
     if (!participant) {
-      throw new Error(`Participant with id ${id} not found`);
+      return false;
     }
 
     const updated = updateStatusUtil(participant, status);
     get().updateParticipant(id, updated);
+    return true;
   },
 
   clearParticipantHand: (id) => {
