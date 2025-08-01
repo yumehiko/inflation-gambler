@@ -3,7 +3,7 @@ import type { Brain, Decision, DecisionContext } from './brain.types';
 export const createHumanBrain = (): Brain => ({
   type: 'human',
   makeDecision: (): Decision => {
-    throw new Error('Human decision requires user input');
+    throw new Error('Human decision requires user input - use UI interaction to get player decision');
   },
 });
 

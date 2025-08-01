@@ -41,13 +41,14 @@ export const createNormalCpuBrain = (): Brain => ({
 });
 
 /**
- * Creates a hard CPU brain that uses card counting hints and deviations
+ * Creates a hard CPU brain that uses card counting hints and deviations.
+ * Accepts an optional RNG function for deterministic testing.
  */
-export const createHardCpuBrain = (): Brain => ({
+export const createHardCpuBrain = (rng: () => number = Math.random): Brain => ({
   type: 'cpu-hard',
   makeDecision: (context: DecisionContext): Decision => {
     // Simulate card counting with random value (in real game, this would track actual cards)
-    const count = Math.random() * 2 - 1; // Range from -1 to 1
+    const count = rng() * 2 - 1; // Range from -1 to 1
     
     // High positive count means deck is rich in high cards (10s and Aces)
     // Negative count means deck is rich in low cards
@@ -101,7 +102,7 @@ export const createCpuBrain = (type: BrainType): Brain => {
     case 'cpu-hard':
       return createHardCpuBrain();
     default:
-      throw new Error(`Invalid CPU brain type: ${type}`);
+      throw new Error(`Invalid CPU brain type: ${type}. Valid types are: cpu-easy, cpu-normal, cpu-hard`);
   }
 };
 

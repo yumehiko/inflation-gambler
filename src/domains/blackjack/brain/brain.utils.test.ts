@@ -39,7 +39,7 @@ describe('brain.utils', () => {
         canInsurance: true,
       };
       
-      expect(() => brain.makeDecision(context)).toThrow('Human decision requires user input');
+      expect(() => brain.makeDecision(context)).toThrow('Human decision requires user input - use UI interaction to get player decision');
     });
   });
 

@@ -146,7 +146,9 @@ describe('cpuBrain', () => {
     });
 
     it('should use basic strategy by default', () => {
-      const brain = createHardCpuBrain();
+      // Use a fixed RNG value that won't trigger deviations
+      const mockRng = vi.fn().mockReturnValue(0.0); // Neutral count
+      const brain = createHardCpuBrain(mockRng);
       
       // Test that it follows basic strategy when no card counting info
       const context: DecisionContext = {
@@ -163,11 +165,9 @@ describe('cpuBrain', () => {
     });
 
     it('should make conservative decisions with high remaining deck value', () => {
-      const brain = createHardCpuBrain();
-      
       // Simulate high card rich deck (positive count)
-      const mockRandom = vi.spyOn(Math, 'random');
-      mockRandom.mockReturnValue(0.9); // High value simulating positive count
+      const mockRng = vi.fn().mockReturnValue(0.9); // High value simulating positive count
+      const brain = createHardCpuBrain(mockRng);
       
       const context: DecisionContext = {
         hand: createMockHand([createMockCard('10'), createMockCard('6')], 16),
@@ -181,16 +181,12 @@ describe('cpuBrain', () => {
       // Should be more likely to surrender/stand with high count on 16 vs 10
       const decision = brain.makeDecision(context);
       expect(['surrender', 'stand']).toContain(decision);
-      
-      mockRandom.mockRestore();
     });
 
     it('should make aggressive decisions with low remaining deck value', () => {
-      const brain = createHardCpuBrain();
-      
       // Simulate low card rich deck (negative count)
-      const mockRandom = vi.spyOn(Math, 'random');
-      mockRandom.mockReturnValue(0.1); // Low value simulating negative count
+      const mockRng = vi.fn().mockReturnValue(0.1); // Low value simulating negative count
+      const brain = createHardCpuBrain(mockRng);
       
       const context: DecisionContext = {
         hand: createMockHand([createMockCard('10'), createMockCard('2')], 12),
@@ -204,16 +200,12 @@ describe('cpuBrain', () => {
       // Should be more likely to hit with negative count on 12 vs 3
       const decision = brain.makeDecision(context);
       expect(decision).toBe('hit');
-      
-      mockRandom.mockRestore();
     });
 
     it('should take insurance with high count vs dealer Ace', () => {
-      const brain = createHardCpuBrain();
-      
       // Simulate very high card rich deck
-      const mockRandom = vi.spyOn(Math, 'random');
-      mockRandom.mockReturnValue(0.95);
+      const mockRng = vi.fn().mockReturnValue(0.95);
+      const brain = createHardCpuBrain(mockRng);
       
       const context: DecisionContext = {
         hand: createMockHand([createMockCard('10'), createMockCard('10')], 20),
@@ -227,8 +219,6 @@ describe('cpuBrain', () => {
       // Should take insurance with very high count
       const decision = brain.makeDecision(context);
       expect(decision).toBe('insurance');
-      
-      mockRandom.mockRestore();
     });
   });
 
@@ -249,11 +239,11 @@ describe('cpuBrain', () => {
     });
 
     it('should throw error for invalid brain type', () => {
-      expect(() => createCpuBrain('invalid' as BrainType)).toThrow('Invalid CPU brain type: invalid');
+      expect(() => createCpuBrain('invalid' as BrainType)).toThrow('Invalid CPU brain type: invalid. Valid types are: cpu-easy, cpu-normal, cpu-hard');
     });
 
     it('should throw error for human brain type', () => {
-      expect(() => createCpuBrain('human' as BrainType)).toThrow('Invalid CPU brain type: human');
+      expect(() => createCpuBrain('human' as BrainType)).toThrow('Invalid CPU brain type: human. Valid types are: cpu-easy, cpu-normal, cpu-hard');
     });
   });
 });
