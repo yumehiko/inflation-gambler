@@ -157,7 +157,7 @@ export const GameSetup: React.FC<GameSetupProps> = ({
                 <div className={styles.playerInfo}>
                   <span className={styles.playerName}>{participant.name}</span>
                   <span className={styles.playerBalance}>¥{participant.balance.toLocaleString()}</span>
-                  <span className={styles.playerType}>{participant.isHuman ? '人間' : 'AI'}</span>
+                  <span className={participant.isHuman ? styles.playerType : `${styles.playerType} ${styles.playerTypeAI}`}>{participant.isHuman ? '人間' : 'AI'}</span>
                 </div>
                 <button
                   onClick={() => handleRemovePlayer(index)}
