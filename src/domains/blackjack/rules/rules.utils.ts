@@ -1,5 +1,5 @@
 import type { BlackjackRules, RulePreset, RulesValidationError } from './rules.types';
-import type { HandHolder } from '../hand-holder/handHolder.types';
+import type { Hand } from '../hand/hand.types';
 import { calculateHandValue } from '../hand/hand.utils';
 
 export const createDefaultRules = (): BlackjackRules => ({
@@ -128,12 +128,12 @@ export const validateRules = (rules: BlackjackRules): RulesValidationError[] => 
 };
 
 export const canDouble = (
-  handHolder: HandHolder,
+  hand: Hand,
   rules: BlackjackRules,
   isAfterSplit: boolean
 ): boolean => {
   // 2枚のカードでなければダブルダウンできない
-  if (handHolder.hand.cards.length !== 2) {
+  if (hand.cards.length !== 2) {
     return false;
   }
   
@@ -148,17 +148,17 @@ export const canDouble = (
   }
   
   // 9, 10, 11のみダブルダウン可能な場合
-  const handValue = calculateHandValue(handHolder.hand.cards);
+  const handValue = calculateHandValue(hand.cards);
   return handValue >= 9 && handValue <= 11;
 };
 
 export const canSplit = (
-  handHolder: HandHolder,
+  hand: Hand,
   rules: BlackjackRules,
   currentSplitCount: number
 ): boolean => {
   // 2枚のカードでなければスプリットできない
-  if (handHolder.hand.cards.length !== 2) {
+  if (hand.cards.length !== 2) {
     return false;
   }
   
@@ -168,7 +168,7 @@ export const canSplit = (
     return false;
   }
   
-  const [card1, card2] = handHolder.hand.cards;
+  const [card1, card2] = hand.cards;
   
   // ランクが異なる場合はスプリットできない
   if (card1.rank !== card2.rank) {

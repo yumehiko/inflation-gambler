@@ -9,7 +9,7 @@ import {
   calculatePayout,
 } from './rules.utils';
 import type { BlackjackRules } from './rules.types';
-import type { HandHolder } from '../hand-holder/handHolder.types';
+
 
 import type { Card, Suit, Rank } from '../../core/card/card.types';
 import { createHand } from '../hand/hand.utils';
@@ -161,24 +161,18 @@ describe('rules.utils', () => {
   });
 
   describe('canDouble', () => {
-    const createMockHandHolder = (cards: Card[]): HandHolder => ({
-      id: 'test',
-      type: 'participant',
-      hand: createHand(cards),
-      status: 'active',
-    });
 
     it('should allow double on any two cards when enabled', () => {
       const rules: BlackjackRules = {
         ...createDefaultRules(),
         doubleOnAnyTwo: true,
       };
-      const handHolder = createMockHandHolder([
+      const hand = createHand([
         createCard('hearts', '5'),
         createCard('diamonds', '4'),
       ]);
       
-      expect(canDouble(handHolder, rules, false)).toBe(true);
+      expect(canDouble(hand, rules, false)).toBe(true);
     });
 
     it('should restrict double to 9, 10, 11 when doubleOnAnyTwo is false', () => {
@@ -188,22 +182,22 @@ describe('rules.utils', () => {
       };
       
       // Hand value 9
-      const handHolder9 = createMockHandHolder([
+      const hand9 = createHand([
         createCard('hearts', '5'),
         createCard('diamonds', '4'),
       ]);
-      expect(canDouble(handHolder9, rules, false)).toBe(true);
+      expect(canDouble(hand9, rules, false)).toBe(true);
       
       // Hand value 8
-      const handHolder8 = createMockHandHolder([
+      const hand8 = createHand([
         createCard('hearts', '5'),
         createCard('diamonds', '3'),
       ]);
-      expect(canDouble(handHolder8, rules, false)).toBe(false);
+      expect(canDouble(hand8, rules, false)).toBe(false);
     });
 
     it('should check doubleAfterSplit rule', () => {
-      const handHolder = createMockHandHolder([
+      const hand = createHand([
         createCard('hearts', '5'),
         createCard('diamonds', '5'),
       ]);
@@ -212,57 +206,51 @@ describe('rules.utils', () => {
         ...createDefaultRules(),
         doubleAfterSplit: true,
       };
-      expect(canDouble(handHolder, rulesWithDAS, true)).toBe(true);
+      expect(canDouble(hand, rulesWithDAS, true)).toBe(true);
       
       const rulesWithoutDAS: BlackjackRules = {
         ...createDefaultRules(),
         doubleAfterSplit: false,
       };
-      expect(canDouble(handHolder, rulesWithoutDAS, true)).toBe(false);
+      expect(canDouble(hand, rulesWithoutDAS, true)).toBe(false);
     });
 
     it('should not allow double with more than 2 cards', () => {
       const rules = createDefaultRules();
-      const handHolder = createMockHandHolder([
+      const hand = createHand([
         createCard('hearts', '5'),
         createCard('diamonds', '4'),
         createCard('clubs', '2'),
       ]);
       
-      expect(canDouble(handHolder, rules, false)).toBe(false);
+      expect(canDouble(hand, rules, false)).toBe(false);
     });
   });
 
   describe('canSplit', () => {
-    const createMockHandHolder = (cards: Card[]): HandHolder => ({
-      id: 'test',
-      type: 'participant',
-      hand: createHand(cards),
-      status: 'active',
-    });
 
     it('should allow split when cards have same rank', () => {
       const rules = createDefaultRules();
-      const handHolder = createMockHandHolder([
+      const hand = createHand([
         createCard('hearts', 'K'),
         createCard('diamonds', 'K'),
       ]);
       
-      expect(canSplit(handHolder, rules, 1)).toBe(true);
+      expect(canSplit(hand, rules, 1)).toBe(true);
     });
 
     it('should not allow split when cards have different ranks', () => {
       const rules = createDefaultRules();
-      const handHolder = createMockHandHolder([
+      const hand = createHand([
         createCard('hearts', 'K'),
         createCard('diamonds', 'Q'),
       ]);
       
-      expect(canSplit(handHolder, rules, 1)).toBe(false);
+      expect(canSplit(hand, rules, 1)).toBe(false);
     });
 
     it('should check splitAces rule', () => {
-      const handHolder = createMockHandHolder([
+      const hand = createHand([
         createCard('hearts', 'A'),
         createCard('diamonds', 'A'),
       ]);
@@ -271,13 +259,13 @@ describe('rules.utils', () => {
         ...createDefaultRules(),
         splitAces: true,
       };
-      expect(canSplit(handHolder, rulesWithSplitAces, 1)).toBe(true);
+      expect(canSplit(hand, rulesWithSplitAces, 1)).toBe(true);
       
       const rulesWithoutSplitAces: BlackjackRules = {
         ...createDefaultRules(),
         splitAces: false,
       };
-      expect(canSplit(handHolder, rulesWithoutSplitAces, 1)).toBe(false);
+      expect(canSplit(hand, rulesWithoutSplitAces, 1)).toBe(false);
     });
 
     it('should check maxSplitHands limit', () => {
@@ -285,24 +273,24 @@ describe('rules.utils', () => {
         ...createDefaultRules(),
         maxSplitHands: 3,
       };
-      const handHolder = createMockHandHolder([
+      const hand = createHand([
         createCard('hearts', '8'),
         createCard('diamonds', '8'),
       ]);
       
-      expect(canSplit(handHolder, rules, 2)).toBe(true);
-      expect(canSplit(handHolder, rules, 3)).toBe(false);
+      expect(canSplit(hand, rules, 2)).toBe(true);
+      expect(canSplit(hand, rules, 3)).toBe(false);
     });
 
     it('should not allow split with more than 2 cards', () => {
       const rules = createDefaultRules();
-      const handHolder = createMockHandHolder([
+      const hand = createHand([
         createCard('hearts', '8'),
         createCard('diamonds', '8'),
         createCard('clubs', '8'),
       ]);
       
-      expect(canSplit(handHolder, rules, 1)).toBe(false);
+      expect(canSplit(hand, rules, 1)).toBe(false);
     });
   });
 
