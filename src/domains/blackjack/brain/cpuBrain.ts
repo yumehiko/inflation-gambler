@@ -7,7 +7,7 @@ import { getAvailableDecisions } from './brain.utils';
  */
 export const createEasyCpuBrain = (): Brain => ({
   type: 'cpu-easy',
-  makeDecision: (context: DecisionContext): Decision => {
+  makeDecision: async (context: DecisionContext): Promise<Decision> => {
     const availableDecisions = getAvailableDecisions(context);
     
     // Bias towards safe plays based on hand value
@@ -35,7 +35,7 @@ export const createEasyCpuBrain = (): Brain => ({
  */
 export const createNormalCpuBrain = (): Brain => ({
   type: 'cpu-normal',
-  makeDecision: (context: DecisionContext): Decision => {
+  makeDecision: async (context: DecisionContext): Promise<Decision> => {
     return getBasicStrategyDecision(context);
   },
 });
@@ -46,7 +46,7 @@ export const createNormalCpuBrain = (): Brain => ({
  */
 export const createHardCpuBrain = (rng: () => number = Math.random): Brain => ({
   type: 'cpu-hard',
-  makeDecision: (context: DecisionContext): Decision => {
+  makeDecision: async (context: DecisionContext): Promise<Decision> => {
     // Simulate card counting with random value (in real game, this would track actual cards)
     const count = rng() * 2 - 1; // Range from -1 to 1
     

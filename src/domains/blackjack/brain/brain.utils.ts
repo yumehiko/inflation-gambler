@@ -1,9 +1,9 @@
-import type { Brain, Decision, DecisionContext } from './brain.types';
+import type { Brain, Decision, DecisionContext, DecisionResolver } from './brain.types';
 
-export const createHumanBrain = (): Brain => ({
+export const createHumanBrain = (resolver: DecisionResolver): Brain => ({
   type: 'human',
-  makeDecision: (): Decision => {
-    throw new Error('Human decision requires user input - use UI interaction to get player decision');
+  makeDecision: async (context: DecisionContext): Promise<Decision> => {
+    return resolver.waitForDecision(context);
   },
 });
 

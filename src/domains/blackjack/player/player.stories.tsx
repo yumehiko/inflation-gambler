@@ -26,12 +26,12 @@ type Story = StoryObj<typeof meta>;
 
 const humanBrain: Brain = {
   type: 'human',
-  makeDecision: () => 'stand',
+  makeDecision: async () => 'stand',
 };
 
 const cpuBrain: Brain = {
   type: 'cpu-easy',
-  makeDecision: () => 'hit',
+  makeDecision: async () => 'hit',
 };
 
 type SetupStoryProps = {

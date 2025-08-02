@@ -24,7 +24,7 @@ describe('PlayerView', () => {
     },
     brain: {
       type: 'human',
-      makeDecision: () => 'stand',
+      makeDecision: async () => 'stand',
     },
     chips: 1000,
     currentBet: 100,
@@ -69,7 +69,7 @@ describe('PlayerView', () => {
       isHuman: false,
       player: {
         ...mockPlayer,
-        brain: { type: 'cpu-easy', makeDecision: () => 'hit' },
+        brain: { type: 'cpu-easy', makeDecision: async () => 'hit' },
       },
     });
 

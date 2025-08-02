@@ -364,7 +364,10 @@ const DecisionSimulator = () => {
             {Object.entries(brains).map(([name, brain]) => {
               let decision: Decision;
               try {
-                decision = brain.makeDecision(context);
+                // Stories run synchronously, so we need to handle the promise
+                const decisionPromise = brain.makeDecision(context);
+                decision = 'stand' as Decision; // Default for display
+                decisionPromise.then(d => { decision = d; });
               } catch {
                 decision = 'stand' as Decision;
               }

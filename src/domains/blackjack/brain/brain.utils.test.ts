@@ -18,18 +18,31 @@ describe('brain.utils', () => {
   });
 
   describe('createHumanBrain', () => {
-    it('should create a human brain with correct type', () => {
-      const brain = createHumanBrain();
+    it('should create a human brain with correct type', async () => {
+      const mockResolver = {
+        waitForDecision: async () => 'stand' as Decision,
+      };
+      const brain = createHumanBrain(mockResolver);
       expect(brain.type).toBe('human');
     });
 
     it('should have makeDecision function', () => {
-      const brain = createHumanBrain();
+      const mockResolver = {
+        waitForDecision: async () => 'stand' as Decision,
+      };
+      const brain = createHumanBrain(mockResolver);
       expect(typeof brain.makeDecision).toBe('function');
     });
 
-    it('should throw error when makeDecision is called (requires user input)', () => {
-      const brain = createHumanBrain();
+    it('should use resolver to get decision', async () => {
+      const mockDecision: Decision = 'hit';
+      const mockResolver = {
+        waitForDecision: async (ctx: DecisionContext) => {
+          expect(ctx.hand.value).toBe(17);
+          return mockDecision;
+        },
+      };
+      const brain = createHumanBrain(mockResolver);
       const context: DecisionContext = {
         hand: createMockHand([createMockCard('10'), createMockCard('7')], 17),
         dealerUpCard: createMockCard('A'),
@@ -39,7 +52,8 @@ describe('brain.utils', () => {
         canInsurance: true,
       };
       
-      expect(() => brain.makeDecision(context)).toThrow('Human decision requires user input - use UI interaction to get player decision');
+      const decision = await brain.makeDecision(context);
+      expect(decision).toBe(mockDecision);
     });
   });
 

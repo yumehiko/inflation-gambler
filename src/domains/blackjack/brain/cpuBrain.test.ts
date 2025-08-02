@@ -29,7 +29,7 @@ describe('cpuBrain', () => {
       expect(brain.type).toBe('cpu-easy');
     });
 
-    it('should make random but valid decisions', () => {
+    it('should make random but valid decisions', async () => {
       const brain = createEasyCpuBrain();
       const context: DecisionContext = {
         hand: createMockHand([createMockCard('10'), createMockCard('5')], 15),
@@ -43,7 +43,7 @@ describe('cpuBrain', () => {
       // Run multiple times to check randomness
       const decisions = new Set<string>();
       for (let i = 0; i < 100; i++) {
-        const decision = brain.makeDecision(context);
+        const decision = await brain.makeDecision(context);
         decisions.add(decision);
         expect(['hit', 'stand', 'double', 'surrender']).toContain(decision);
       }
@@ -52,7 +52,7 @@ describe('cpuBrain', () => {
       expect(decisions.size).toBeGreaterThanOrEqual(2);
     });
 
-    it('should only make valid decisions based on context', () => {
+    it('should only make valid decisions based on context', async () => {
       const brain = createEasyCpuBrain();
       const context: DecisionContext = {
         hand: createMockHand([createMockCard('10'), createMockCard('7')], 17),
@@ -65,13 +65,13 @@ describe('cpuBrain', () => {
 
       // Run multiple times
       for (let i = 0; i < 50; i++) {
-        const decision = brain.makeDecision(context);
+        const decision = await brain.makeDecision(context);
         // Only hit, stand, and insurance should be possible
         expect(['hit', 'stand', 'insurance']).toContain(decision);
       }
     });
 
-    it('should have bias towards safe plays on good hands', () => {
+    it('should have bias towards safe plays on good hands', async () => {
       const brain = createEasyCpuBrain();
       const context: DecisionContext = {
         hand: createMockHand([createMockCard('10'), createMockCard('10')], 20),
@@ -86,7 +86,7 @@ describe('cpuBrain', () => {
       const iterations = 100;
       
       for (let i = 0; i < iterations; i++) {
-        const decision = brain.makeDecision(context);
+        const decision = await brain.makeDecision(context);
         if (decision === 'stand') standCount++;
       }
 
@@ -101,7 +101,7 @@ describe('cpuBrain', () => {
       expect(brain.type).toBe('cpu-normal');
     });
 
-    it('should follow basic strategy', () => {
+    it('should follow basic strategy', async () => {
       const brain = createNormalCpuBrain();
       
       // Test basic strategy decision: always hit on 8 or less
@@ -113,7 +113,7 @@ describe('cpuBrain', () => {
         canSurrender: false,
         canInsurance: false,
       };
-      expect(brain.makeDecision(context1)).toBe('hit');
+      expect(await brain.makeDecision(context1)).toBe('hit');
 
       // Test basic strategy decision: stand on hard 17+
       const context2: DecisionContext = {
@@ -124,7 +124,7 @@ describe('cpuBrain', () => {
         canSurrender: false,
         canInsurance: false,
       };
-      expect(brain.makeDecision(context2)).toBe('stand');
+      expect(await brain.makeDecision(context2)).toBe('stand');
 
       // Test basic strategy decision: always split Aces
       const context3: DecisionContext = {
@@ -135,7 +135,7 @@ describe('cpuBrain', () => {
         canSurrender: false,
         canInsurance: false,
       };
-      expect(brain.makeDecision(context3)).toBe('split');
+      expect(await brain.makeDecision(context3)).toBe('split');
     });
   });
 
@@ -145,7 +145,7 @@ describe('cpuBrain', () => {
       expect(brain.type).toBe('cpu-hard');
     });
 
-    it('should use basic strategy by default', () => {
+    it('should use basic strategy by default', async () => {
       // Use a fixed RNG value that won't trigger deviations
       const mockRng = vi.fn().mockReturnValue(0.0); // Neutral count
       const brain = createHardCpuBrain(mockRng);
@@ -161,10 +161,10 @@ describe('cpuBrain', () => {
       };
       
       // Basic strategy says always split 8s
-      expect(brain.makeDecision(context)).toBe('split');
+      expect(await brain.makeDecision(context)).toBe('split');
     });
 
-    it('should make conservative decisions with high remaining deck value', () => {
+    it('should make conservative decisions with high remaining deck value', async () => {
       // Simulate high card rich deck (positive count)
       const mockRng = vi.fn().mockReturnValue(0.9); // High value simulating positive count
       const brain = createHardCpuBrain(mockRng);
@@ -179,11 +179,11 @@ describe('cpuBrain', () => {
       };
       
       // Should be more likely to surrender/stand with high count on 16 vs 10
-      const decision = brain.makeDecision(context);
+      const decision = await brain.makeDecision(context);
       expect(['surrender', 'stand']).toContain(decision);
     });
 
-    it('should make aggressive decisions with low remaining deck value', () => {
+    it('should make aggressive decisions with low remaining deck value', async () => {
       // Simulate low card rich deck (negative count)
       const mockRng = vi.fn().mockReturnValue(0.1); // Low value simulating negative count
       const brain = createHardCpuBrain(mockRng);
@@ -198,11 +198,11 @@ describe('cpuBrain', () => {
       };
       
       // Should be more likely to hit with negative count on 12 vs 3
-      const decision = brain.makeDecision(context);
+      const decision = await brain.makeDecision(context);
       expect(decision).toBe('hit');
     });
 
-    it('should take insurance with high count vs dealer Ace', () => {
+    it('should take insurance with high count vs dealer Ace', async () => {
       // Simulate very high card rich deck
       const mockRng = vi.fn().mockReturnValue(0.95);
       const brain = createHardCpuBrain(mockRng);
@@ -217,7 +217,7 @@ describe('cpuBrain', () => {
       };
       
       // Should take insurance with very high count
-      const decision = brain.makeDecision(context);
+      const decision = await brain.makeDecision(context);
       expect(decision).toBe('insurance');
     });
   });

@@ -8,12 +8,12 @@ import { Card } from '../../core/card/card.types';
 describe('player.utils', () => {
   const mockHumanBrain: Brain = {
     type: 'human',
-    makeDecision: () => 'stand',
+    makeDecision: async () => 'stand',
   };
 
   const mockCpuBrain: Brain = {
     type: 'cpu-easy',
-    makeDecision: () => 'hit',
+    makeDecision: async () => 'hit',
   };
 
   describe('createPlayer', () => {

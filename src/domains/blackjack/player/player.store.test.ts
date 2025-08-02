@@ -6,7 +6,7 @@ import { Hand } from '../hand/hand.types';
 describe('player.store', () => {
   const mockBrain: Brain = {
     type: 'human',
-    makeDecision: () => 'stand',
+    makeDecision: async () => 'stand',
   };
 
   beforeEach(() => {

@@ -7,7 +7,7 @@ import { Brain } from '../brain/brain.types';
 describe('player.hook', () => {
   const mockBrain: Brain = {
     type: 'human',
-    makeDecision: () => 'stand',
+    makeDecision: async () => 'stand',
   };
 
   beforeEach(() => {

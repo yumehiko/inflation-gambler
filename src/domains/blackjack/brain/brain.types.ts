@@ -16,7 +16,10 @@ export type DecisionContext = {
 
 export type Brain = {
   type: BrainType;
-  makeDecision: (context: DecisionContext) => Decision;
+  makeDecision: (context: DecisionContext) => Promise<Decision>;
+};
+export type DecisionResolver = {
+  waitForDecision: (context: DecisionContext) => Promise<Decision>;
 };
 
 export type DecisionHistory = {
