@@ -1,0 +1,75 @@
+import { Player } from './player.types';
+import { Hand } from '../hand/hand.types';
+import { Brain } from '../brain/brain.types';
+
+export const createPlayer = (
+  id: string,
+  name: string,
+  brain: Brain,
+  chips: number
+): Player => {
+  return {
+    id,
+    name,
+    hand: {
+      cards: [],
+      value: 0,
+      isBust: false,
+      isBlackjack: false,
+    },
+    brain,
+    chips,
+    currentBet: 0,
+    isActive: false,
+    hasStood: false,
+    hasBusted: false,
+  };
+};
+
+export const isHuman = (player: Player): boolean => {
+  return player.brain.type === 'human';
+};
+
+export const canAct = (player: Player): boolean => {
+  return player.isActive && !player.hasStood && !player.hasBusted;
+};
+
+export const updatePlayerHand = (player: Player, hand: Hand): Player => {
+  return {
+    ...player,
+    hand,
+    hasBusted: hand.isBust,
+  };
+};
+
+export const placeBet = (player: Player, amount: number): Player => {
+  if (amount < 0) {
+    throw new Error('Invalid bet amount');
+  }
+  if (amount > player.chips) {
+    throw new Error('Insufficient chips');
+  }
+
+  return {
+    ...player,
+    currentBet: amount,
+    chips: player.chips - amount,
+  };
+};
+
+export const winBet = (player: Player, payoutMultiplier: number): Player => {
+  const winnings = player.currentBet * payoutMultiplier;
+  
+  return {
+    ...player,
+    chips: player.chips + player.currentBet + winnings,
+    currentBet: 0,
+  };
+};
+
+export const loseBet = (player: Player): Player => {
+  return {
+    ...player,
+    currentBet: 0,
+  };
+};
