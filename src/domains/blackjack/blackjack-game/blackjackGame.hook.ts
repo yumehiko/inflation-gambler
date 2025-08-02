@@ -7,13 +7,8 @@ export const useBlackjackGameHook = () => {
     setIsGameStarted(true)
   }, [])
 
-  const handleGameEnd = useCallback(() => {
-    setIsGameStarted(false)
-  }, [])
-
   return {
     isGameStarted,
-    handleGameStart,
-    handleGameEnd
+    handleGameStart
   }
 }
