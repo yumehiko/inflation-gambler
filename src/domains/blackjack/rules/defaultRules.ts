@@ -75,7 +75,7 @@ export const strictRules: BlackjackRules = {
 export const liberalRules: BlackjackRules = {
   deckCount: 2,
   cutCardRatio: 0.9,
-  dealerStandsOn: 16,
+  dealerStandsOn: 17,
   dealerHitsSoft17: false,
   doubleAfterSplit: true,
   doubleOnAnyTwo: true,

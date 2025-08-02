@@ -78,6 +78,14 @@ export const validateRules = (rules: BlackjackRules): RulesValidationError[] => 
     });
   }
   
+  // ディーラースタンドルールの検証
+  if (rules.dealerStandsOn !== 16 && rules.dealerStandsOn !== 17) {
+    errors.push({
+      field: 'dealerStandsOn',
+      message: 'Dealer stands on must be either 16 or 17',
+    });
+  }
+  
   // スプリット回数の検証
   if (rules.maxSplitHands < 1 || rules.maxSplitHands > 4) {
     errors.push({
@@ -155,6 +163,7 @@ export const canSplit = (
   }
   
   // スプリット回数の上限チェック
+  // currentSplitCountは現在のハンド数を表すため、maxSplitHandsと直接比較
   if (currentSplitCount >= rules.maxSplitHands) {
     return false;
   }

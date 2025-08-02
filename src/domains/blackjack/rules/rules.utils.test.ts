@@ -147,6 +147,17 @@ describe('rules.utils', () => {
       expect(errors[0].field).toBe('minBet');
       expect(errors[0].message).toContain('exceed maxBet');
     });
+
+    it('should detect invalid dealer stands on value', () => {
+      const rules: BlackjackRules = {
+        ...createDefaultRules(),
+        dealerStandsOn: 15 as 16 | 17,
+      };
+      const errors = validateRules(rules);
+      expect(errors).toHaveLength(1);
+      expect(errors[0].field).toBe('dealerStandsOn');
+      expect(errors[0].message).toContain('16 or 17');
+    });
   });
 
   describe('canDouble', () => {
