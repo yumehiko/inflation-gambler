@@ -1,29 +1,26 @@
-import type { Participant, ParticipantRole, ParticipantStatus, ParticipantAction } from "./participant.types";
+import type { Participant, ParticipantStatus, ParticipantAction } from "./participant.types";
 import type { Coin } from "../../core/coin/coin.types";
+import type { Brain } from "../brain/brain.types";
 import { createCoin } from "../../core/coin/coin.utils";
 
-type CreateParticipantOptions = {
+export type CreateParticipantOptions = {
   id: string;
   name: string;
-  role: ParticipantRole;
   balance: Coin;
+  brain: Brain;
 };
 
 export const createParticipant = (options: CreateParticipantOptions): Participant => ({
   id: options.id,
   name: options.name,
-  role: options.role,
   status: "waiting",
   hand: null,
   bet: null,
   balance: options.balance,
+  brain: options.brain,
 });
 
 export const canPlaceBet = (participant: Participant, amount: number): boolean => {
-  if (participant.role === "dealer") {
-    return false;
-  }
-  
   if (participant.status !== "waiting") {
     return false;
   }

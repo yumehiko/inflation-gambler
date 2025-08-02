@@ -1,6 +1,5 @@
 import { create } from "zustand";
-import type { Participant, ParticipantRole, ParticipantStatus } from "./participant.types";
-import type { Coin } from "../../core/coin/coin.types";
+import type { Participant, ParticipantStatus } from "./participant.types";
 import type { Hand } from "../hand/hand.types";
 import { 
   createParticipant, 
@@ -8,14 +7,9 @@ import {
   updateParticipantStatus as updateStatusUtil,
   clearParticipantHand as clearHandUtil,
   isParticipantActive,
+  type CreateParticipantOptions,
 } from "./participant.utils";
 
-type CreateParticipantOptions = {
-  id: string;
-  name: string;
-  role: ParticipantRole;
-  balance: Coin;
-};
 
 type ParticipantState = {
   participants: Participant[];

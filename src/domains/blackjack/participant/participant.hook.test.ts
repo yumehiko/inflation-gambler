@@ -3,6 +3,7 @@ import { renderHook, act } from "@testing-library/react";
 import { useParticipant } from "./participant.hook";
 import { useParticipantStore } from "./participant.store";
 import { createCoin } from "../../core/coin/coin.utils";
+import { createHumanBrain } from "../brain/brain.utils";
 
 describe("participant.hook", () => {
   beforeEach(() => {
@@ -19,8 +20,8 @@ describe("participant.hook", () => {
         result.current.addParticipant({
           id: "player1",
           name: "Alice",
-          role: "player",
           balance: createCoin(1000),
+          brain: createHumanBrain(),
         });
       });
 
@@ -35,8 +36,8 @@ describe("participant.hook", () => {
         result.current.addParticipant({
           id: "player1",
           name: "Alice",
-          role: "player",
           balance: createCoin(1000),
+          brain: createHumanBrain(),
         });
       });
 
@@ -56,15 +57,15 @@ describe("participant.hook", () => {
         result.current.addParticipant({
           id: "player1",
           name: "Alice",
-          role: "player",
           balance: createCoin(1000),
+          brain: createHumanBrain(),
         });
         
         result.current.addParticipant({
           id: "player2",
           name: "Bob",
-          role: "player",
           balance: createCoin(500),
+          brain: createHumanBrain(),
         });
       });
 
@@ -83,8 +84,8 @@ describe("participant.hook", () => {
         result.current.addParticipant({
           id: "player1",
           name: "Alice",
-          role: "player",
           balance: createCoin(1000),
+          brain: createHumanBrain(),
         });
       });
 
@@ -99,8 +100,8 @@ describe("participant.hook", () => {
         result.current.addParticipant({
           id: "player1",
           name: "Alice",
-          role: "player",
           balance: createCoin(1000),
+          brain: createHumanBrain(),
         });
       });
 

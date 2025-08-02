@@ -12,6 +12,7 @@ import type { Participant } from "./participant.types";
 import { createCoin } from "../../core/coin/coin.utils";
 import { createHand } from "../hand/hand.utils";
 import type { Card } from "../../core/card/card.types";
+import { createHumanBrain } from "../brain/brain.utils";
 
 describe("participant.utils", () => {
   describe("createParticipant", () => {
@@ -19,30 +20,19 @@ describe("participant.utils", () => {
       const participant = createParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       expect(participant.id).toBe("player1");
       expect(participant.name).toBe("Alice");
-      expect(participant.role).toBe("player");
       expect(participant.status).toBe("waiting");
       expect(participant.hand).toBeNull();
       expect(participant.bet).toBeNull();
       expect(participant.balance.value).toBe(1000);
     });
 
-    it("should create a dealer participant", () => {
-      const participant = createParticipant({
-        id: "dealer1",
-        name: "Dealer",
-        role: "dealer",
-        balance: createCoin(0),
-      });
 
-      expect(participant.role).toBe("dealer");
-      expect(participant.balance.value).toBe(0);
-    });
   });
 
   describe("canPlaceBet", () => {
@@ -50,8 +40,8 @@ describe("participant.utils", () => {
       const participant = createParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       expect(canPlaceBet(participant, 500)).toBe(true);
@@ -61,8 +51,8 @@ describe("participant.utils", () => {
       const participant = createParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(100),
+        brain: createHumanBrain(),
       });
 
       expect(canPlaceBet(participant, 500)).toBe(false);
@@ -73,22 +63,11 @@ describe("participant.utils", () => {
         ...createParticipant({
           id: "player1",
           name: "Alice",
-          role: "player",
           balance: createCoin(1000),
+          brain: createHumanBrain(),
         }),
         status: "active",
       };
-
-      expect(canPlaceBet(participant, 500)).toBe(false);
-    });
-
-    it("should return false for dealer", () => {
-      const participant = createParticipant({
-        id: "dealer1",
-        name: "Dealer",
-        role: "dealer",
-        balance: createCoin(1000),
-      });
 
       expect(canPlaceBet(participant, 500)).toBe(false);
     });
@@ -97,11 +76,11 @@ describe("participant.utils", () => {
   describe("canPerformAction", () => {
     const activeParticipant: Participant = {
       ...createParticipant({
-        id: "player1",
-        name: "Alice",
-        role: "player",
-        balance: createCoin(1000),
-      }),
+          id: "player1",
+          name: "Alice",
+          balance: createCoin(1000),
+          brain: createHumanBrain(),
+        }),
       status: "active",
       hand: createHand([
         { suit: "hearts", rank: "10", faceUp: true } as Card,
@@ -163,8 +142,8 @@ describe("participant.utils", () => {
       const participant = createParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       const updatedParticipant = placeBet(participant, 200);
@@ -178,8 +157,8 @@ describe("participant.utils", () => {
       const participant = createParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(100),
+        brain: createHumanBrain(),
       });
 
       expect(() => placeBet(participant, 200)).toThrow();
@@ -191,8 +170,8 @@ describe("participant.utils", () => {
       const participant = createParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       const updated = updateParticipantStatus(participant, "bust");
@@ -206,8 +185,8 @@ describe("participant.utils", () => {
         ...createParticipant({
           id: "player1",
           name: "Alice",
-          role: "player",
           balance: createCoin(1000),
+          brain: createHumanBrain(),
         }),
         status: "bust",
         hand: createHand([{ suit: "hearts", rank: "10", faceUp: true } as Card]),
@@ -228,8 +207,8 @@ describe("participant.utils", () => {
         ...createParticipant({
           id: "player1",
           name: "Alice",
-          role: "player",
           balance: createCoin(1000),
+          brain: createHumanBrain(),
         }),
         status: "active",
       };
@@ -241,8 +220,8 @@ describe("participant.utils", () => {
       const waitingParticipant = createParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       expect(isParticipantActive(waitingParticipant)).toBe(false);

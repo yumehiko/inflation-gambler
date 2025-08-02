@@ -3,6 +3,7 @@ import { useParticipantStore } from "./participant.store";
 import { createCoin } from "../../core/coin/coin.utils";
 import { createHand } from "../hand/hand.utils";
 import type { Card } from "../../core/card/card.types";
+import { createHumanBrain } from "../brain/brain.utils";
 
 describe("participant.store", () => {
   beforeEach(() => {
@@ -16,8 +17,8 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       const participants = useParticipantStore.getState().participants;
@@ -33,15 +34,15 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
       
       store.addParticipant({
         id: "dealer1",
         name: "Dealer",
-        role: "dealer",
         balance: createCoin(0),
+        brain: createHumanBrain(),
       });
 
       expect(useParticipantStore.getState().participants).toHaveLength(2);
@@ -55,15 +56,15 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
       
       store.addParticipant({
         id: "player2",
         name: "Bob",
-        role: "player",
         balance: createCoin(500),
+        brain: createHumanBrain(),
       });
 
       store.removeParticipant("player1");
@@ -81,8 +82,8 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       const updatedParticipant = {
@@ -108,8 +109,8 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       store.placeBet("player1", 200);
@@ -134,8 +135,8 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       const hand = createHand([
@@ -157,8 +158,8 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       store.updateParticipantStatus("player1", "bust");
@@ -183,8 +184,8 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       // Set up participant with hand and bet
@@ -211,8 +212,8 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
 
       const participant = store.getParticipantById("player1");
@@ -234,15 +235,15 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
       
       store.addParticipant({
         id: "player2",
         name: "Bob",
-        role: "player",
         balance: createCoin(500),
+        brain: createHumanBrain(),
       });
 
       store.placeBet("player1", 100);
@@ -260,15 +261,15 @@ describe("participant.store", () => {
       store.addParticipant({
         id: "player1",
         name: "Alice",
-        role: "player",
         balance: createCoin(1000),
+        brain: createHumanBrain(),
       });
       
       store.addParticipant({
         id: "player2",
         name: "Bob",
-        role: "player",
         balance: createCoin(500),
+        brain: createHumanBrain(),
       });
 
       store.reset();
