@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { ActionButtonsView } from './actionButtons.view';
 import { useState } from 'react';
-import type { GameAction } from '../game-controller/gameController.types';
+import type { ActionType } from './actionButtons.types';
 import type { ActionButtonsProps } from './actionButtons.types';
 
 const meta = {
@@ -54,7 +54,7 @@ export const AllActionsAvailable: Story = {
     canDouble: true,
     canSplit: true,
     canSurrender: true,
-    onAction: (action: GameAction) => console.log('Action:', action),
+    onAction: (action: { type: ActionType }) => console.log('Action:', action),
     disabled: false,
   },
 };
@@ -67,7 +67,7 @@ export const BasicActionsOnly: Story = {
     canDouble: false,
     canSplit: false,
     canSurrender: false,
-    onAction: (action: GameAction) => console.log('Action:', action),
+    onAction: (action: { type: ActionType }) => console.log('Action:', action),
     disabled: false,
   },
 };
@@ -80,7 +80,7 @@ export const FirstTurnOptions: Story = {
     canDouble: true,
     canSplit: false,
     canSurrender: true,
-    onAction: (action: GameAction) => console.log('Action:', action),
+    onAction: (action: { type: ActionType }) => console.log('Action:', action),
     disabled: false,
   },
 };
@@ -93,7 +93,7 @@ export const SplitAvailable: Story = {
     canDouble: true,
     canSplit: true,
     canSurrender: false,
-    onAction: (action: GameAction) => console.log('Action:', action),
+    onAction: (action: { type: ActionType }) => console.log('Action:', action),
     disabled: false,
   },
 };
@@ -106,7 +106,7 @@ export const OnlyStandAvailable: Story = {
     canDouble: false,
     canSplit: false,
     canSurrender: false,
-    onAction: (action: GameAction) => console.log('Action:', action),
+    onAction: (action: { type: ActionType }) => console.log('Action:', action),
     disabled: false,
   },
 };
@@ -119,7 +119,7 @@ export const AllDisabled: Story = {
     canDouble: true,
     canSplit: true,
     canSurrender: true,
-    onAction: (action: GameAction) => console.log('Action:', action),
+    onAction: (action: { type: ActionType }) => console.log('Action:', action),
     disabled: true,
   },
 };
@@ -128,7 +128,7 @@ const InteractiveComponent = (args: ActionButtonsProps) => {
   const [lastAction, setLastAction] = useState<string | null>(null);
   const [actionCount, setActionCount] = useState(0);
 
-  const handleAction = (action: GameAction) => {
+  const handleAction = (action: { type: ActionType }) => {
     setLastAction(action.type);
     setActionCount(count => count + 1);
     console.log('Action:', action);

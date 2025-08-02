@@ -1,4 +1,5 @@
-import type { GameAction } from '../game-controller/gameController.types';
+
+export type ActionType = 'hit' | 'stand' | 'double' | 'split' | 'surrender';
 
 export type ActionButtonsProps = {
   readonly participantId: string;
@@ -7,6 +8,6 @@ export type ActionButtonsProps = {
   readonly canDouble: boolean;
   readonly canSplit: boolean;
   readonly canSurrender: boolean;
-  readonly onAction: (action: GameAction) => void;
+  readonly onAction: (action: { type: ActionType }) => void;
   readonly disabled?: boolean;
 };
