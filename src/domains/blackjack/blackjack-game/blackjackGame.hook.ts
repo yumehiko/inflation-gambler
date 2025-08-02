@@ -5,6 +5,7 @@ export const useBlackjackGameHook = () => {
   const [isGameStarted, setIsGameStarted] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | undefined>(undefined)
   const [isLoading, setIsLoading] = useState(false)
+  const [betAmount, setBetAmount] = useState(0)
   const gameController = useGameController()
 
   const handleGameStart = useCallback(() => {
@@ -12,14 +13,18 @@ export const useBlackjackGameHook = () => {
     setErrorMessage(undefined)
   }, [])
 
-  const handleBetConfirm = useCallback((amount: number) => {
+  const handleBetChange = useCallback((amount: number) => {
+    setBetAmount(amount)
+  }, [])
+
+  const handleBetConfirm = useCallback(() => {
     try {
       setIsLoading(true)
       // ベット処理をgame-controllerに委譲
       const currentParticipant = gameController.currentParticipant
       if (currentParticipant) {
         const betsMap = new Map<string, number>()
-        betsMap.set(currentParticipant.id, amount)
+        betsMap.set(currentParticipant.id, betAmount)
         gameController.placeBets(betsMap)
       }
       setErrorMessage(undefined)
@@ -28,7 +33,7 @@ export const useBlackjackGameHook = () => {
     } finally {
       setIsLoading(false)
     }
-  }, [gameController])
+  }, [gameController, betAmount])
 
   const handlePlayerAction = useCallback((action: "hit" | "stand" | "double" | "split" | "surrender") => {
     try {
@@ -75,9 +80,11 @@ export const useBlackjackGameHook = () => {
     errorMessage,
     isLoading,
     isPlayerActionRequired,
+    betAmount,
     
     // ハンドラー
     handleGameStart,
+    handleBetChange,
     handleBetConfirm,
     handlePlayerAction,
     handleNextRound,

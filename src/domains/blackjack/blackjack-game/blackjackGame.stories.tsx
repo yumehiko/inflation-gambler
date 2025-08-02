@@ -4,9 +4,10 @@ import { useBlackjackGameHook } from "./blackjackGame.hook";
 import { within } from "@storybook/test";
 import { expect } from "@storybook/test";
 
+const mockUseBlackjackGameHook = useBlackjackGameHook as ReturnType<typeof vi.fn>;
+
 // フックのモック
 vi.mock("./blackjackGame.hook");
-const mockUseBlackjackGameHook = useBlackjackGameHook as ReturnType<typeof vi.fn>;
 
 // 関連コンポーネントのモック
 vi.mock("../game-setup/gameSetup.view", () => ({
@@ -36,28 +37,26 @@ vi.mock("../game-controller/gameController.view", () => ({
 }));
 
 vi.mock("../betting-input/bettingInput.view", () => ({
-  BettingInput: ({ onBetConfirm }: { onBetConfirm: (amount: number) => void }) => (
+  BettingInputView: ({ onBetConfirm }: { onBetConfirm: () => void }) => (
     <div style={{ backgroundColor: "white", padding: "1rem", borderRadius: "0.5rem" }}>
       <h3>ベット額を入力</h3>
       <div style={{ display: "flex", gap: "1rem", marginTop: "1rem" }}>
-        <button onClick={() => onBetConfirm(100)}>100コイン</button>
-        <button onClick={() => onBetConfirm(500)}>500コイン</button>
-        <button onClick={() => onBetConfirm(1000)}>1000コイン</button>
+        <button onClick={onBetConfirm}>ベット確定</button>
       </div>
     </div>
   ),
 }));
 
 vi.mock("../action-buttons/actionButtons.view", () => ({
-  ActionButtons: ({ onAction }: { onAction: (action: string) => void }) => (
+  ActionButtonsView: ({ onAction }: { onAction: (action: { type: string }) => void }) => (
     <div style={{ display: "flex", gap: "1rem" }}>
-      <button onClick={() => onAction("hit")} style={{ padding: "0.5rem 1rem" }}>
+      <button onClick={() => onAction({ type: "hit" })} style={{ padding: "0.5rem 1rem" }}>
         ヒット
       </button>
-      <button onClick={() => onAction("stand")} style={{ padding: "0.5rem 1rem" }}>
+      <button onClick={() => onAction({ type: "stand" })} style={{ padding: "0.5rem 1rem" }}>
         スタンド
       </button>
-      <button onClick={() => onAction("double")} style={{ padding: "0.5rem 1rem" }}>
+      <button onClick={() => onAction({ type: "double" })} style={{ padding: "0.5rem 1rem" }}>
         ダブル
       </button>
     </div>
@@ -98,7 +97,9 @@ const createMockHookReturn = (overrides: Partial<ReturnType<typeof useBlackjackG
   errorMessage: undefined,
   isLoading: false,
   isPlayerActionRequired: false,
+  betAmount: 0,
   handleGameStart: vi.fn(),
+  handleBetChange: vi.fn(),
   handleBetConfirm: vi.fn(),
   handlePlayerAction: vi.fn(),
   handleNextRound: vi.fn(),

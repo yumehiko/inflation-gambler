@@ -14,7 +14,9 @@ export const BlackjackGame = () => {
     errorMessage,
     isLoading,
     isPlayerActionRequired,
+    betAmount,
     handleGameStart,
+    handleBetChange,
     handleBetConfirm,
     handlePlayerAction,
     handleNextRound,
@@ -72,9 +74,9 @@ export const BlackjackGame = () => {
             balance={currentPlayer.balance.value}
             minBet={1}
             maxBet={currentPlayer.balance.value}
-            currentBet={0}
-            onBetChange={() => {}}
-            onBetConfirm={() => handleBetConfirm(100)} // TODO: 実際のベット額を管理
+            currentBet={betAmount}
+            onBetChange={handleBetChange}
+            onBetConfirm={handleBetConfirm}
           />
         )}
 
