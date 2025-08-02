@@ -1,5 +1,4 @@
 export type BettingInputProps = {
-  readonly participantId: string;
   readonly balance: number;
   readonly minBet: number;
   readonly maxBet: number;

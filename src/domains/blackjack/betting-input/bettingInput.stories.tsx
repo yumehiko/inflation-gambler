@@ -69,7 +69,6 @@ const InteractiveComponent = (args: BettingInputProps) => {
 
 export const Default: Story = {
   args: {
-    participantId: "player1",
     balance: 1000,
     minBet: 10,
     maxBet: 500,
@@ -129,7 +128,6 @@ export const Disabled: Story = {
 export const Interactive: Story = {
   render: (args) => <InteractiveComponent {...args} />,
   args: {
-    participantId: "player1",
     balance: 1000,
     minBet: 10,
     maxBet: 500,

@@ -42,6 +42,7 @@ export const BettingInputView: FC<BettingInputProps> = ({
         break;
       }
       case "half":
+        // Round down to nearest integer (casino standard)
         onBetChange(Math.floor(currentBet / 2));
         break;
       case "clear":

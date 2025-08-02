@@ -5,7 +5,6 @@ import { BettingInputView } from "./bettingInput.view";
 
 describe("BettingInputView", () => {
   const defaultProps = {
-    participantId: "player1",
     balance: 1000,
     minBet: 10,
     maxBet: 500,
