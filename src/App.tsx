@@ -1,5 +1,3 @@
-import { Counter } from './domains/counter/counter.view'
-
 function App() {
   return (
     <div style={{ 
@@ -10,9 +8,7 @@ function App() {
       minHeight: '100vh',
       padding: '2rem'
     }}>
-      <h1>React Web Template</h1>
-      <p style={{ marginBottom: '2rem' }}>Domain-Driven Design Demo</p>
-      <Counter />
+      <h1>Inflation Gambler</h1>
     </div>
   )
 }
