@@ -122,14 +122,12 @@ export const GameResult: FC<GameResultProps> = ({
         ))}
       </div>
       
-      {results.length > 0 && (
-        <div className={styles.summary}>
-          <div className={styles.totalDisplay}>
-            Total: {totalWinnings >= 0 ? "+" : ""}
-            {totalWinnings}
-          </div>
+      <div className={styles.summary}>
+        <div className={styles.totalDisplay}>
+          Total: {totalWinnings > 0 ? "+" : ""}
+          {totalWinnings}
         </div>
-      )}
+      </div>
       
       <div className={styles.actions}>
         <button
