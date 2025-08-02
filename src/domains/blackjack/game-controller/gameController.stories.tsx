@@ -4,6 +4,7 @@ import type { Participant } from "../participant/participant.types";
 import type { Dealer } from "../dealer/dealer.types";
 import type { Card } from "../../core/card/card.types";
 import type { Decision } from "../brain/brain.types";
+import { calculateHandValue, isBlackjack } from "../hand/hand.utils";
 
 const meta = {
   title: "Domains/Blackjack/GameController/GameTableView",
@@ -35,11 +36,9 @@ const createParticipant = (
   status,
   hand: cards.length > 0 ? {
     cards,
-    value: 0, // Would be calculated by utils
-    isBust: false,
-    isBlackjack: cards.length === 2 && 
-      ((cards[0].rank === "A" && ["10", "J", "Q", "K"].includes(cards[1].rank)) ||
-       (cards[1].rank === "A" && ["10", "J", "Q", "K"].includes(cards[0].rank))),
+    value: calculateHandValue(cards),
+    isBust: calculateHandValue(cards) > 21,
+    isBlackjack: isBlackjack(cards),
   } : null,
   bet: betAmount > 0 ? { value: betAmount } : null,
   balance: { value: balance },
@@ -53,9 +52,9 @@ const createDealer = (cards: Card[] = []): Dealer => ({
   id: "dealer",
   hand: {
     cards,
-    value: 0, // Would be calculated by utils
-    isBust: false,
-    isBlackjack: false
+    value: calculateHandValue(cards),
+    isBust: calculateHandValue(cards) > 21,
+    isBlackjack: isBlackjack(cards)
   },
   isShowingHoleCard: cards.length > 1 && cards.every(c => c.faceUp)
 });
