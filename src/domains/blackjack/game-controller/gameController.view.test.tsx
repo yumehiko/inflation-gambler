@@ -90,7 +90,7 @@ describe("GameTableView", () => {
       });
       
       render(<GameTableView />);
-      expect(screen.getByLabelText("Action buttons")).toBeInTheDocument();
+      expect(screen.getByLabelText("Player actions")).toBeInTheDocument();
     });
   });
 

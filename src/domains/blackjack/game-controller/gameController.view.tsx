@@ -1,6 +1,8 @@
 import { FC } from "react";
 import { useGameController } from "./gameController.hook";
 import { HandView } from "../hand/hand.view";
+import { ActionButtonsView } from "../action-buttons/actionButtons.view";
+import type { GameAction } from "./gameController.types";
 import styles from "./gameController.module.css";
 
 export const GameTableView: FC = () => {
@@ -37,9 +39,9 @@ export const GameTableView: FC = () => {
     }
   };
 
-  const handleActionClick = (action: "hit" | "stand" | "double" | "split" | "surrender") => {
+  const handleActionClick = (action: GameAction) => {
     if (currentParticipant) {
-      handlePlayerAction(currentParticipant.id, { type: action });
+      handlePlayerAction(currentParticipant.id, action);
     }
   };
 
@@ -96,29 +98,16 @@ export const GameTableView: FC = () => {
 
       {/* Action Buttons Area */}
       {isGameInProgress && currentParticipant && phase === "playing" && (
-        <div className={styles.actionButtons} aria-label="Action buttons">
-          <button
-            onClick={() => handleActionClick("hit")}
-            disabled={!canPerformAction(currentParticipant.id, { type: "hit" })}
-            className={styles.actionButton}
-          >
-            Hit
-          </button>
-          <button
-            onClick={() => handleActionClick("stand")}
-            disabled={!canPerformAction(currentParticipant.id, { type: "stand" })}
-            className={styles.actionButton}
-          >
-            Stand
-          </button>
-          <button
-            onClick={() => handleActionClick("double")}
-            disabled={!canPerformAction(currentParticipant.id, { type: "double" })}
-            className={styles.actionButton}
-          >
-            Double
-          </button>
-        </div>
+        <ActionButtonsView
+          participantId={currentParticipant.id}
+          canHit={canPerformAction(currentParticipant.id, { type: "hit" })}
+          canStand={canPerformAction(currentParticipant.id, { type: "stand" })}
+          canDouble={canPerformAction(currentParticipant.id, { type: "double" })}
+          canSplit={canPerformAction(currentParticipant.id, { type: "split" })}
+          canSurrender={canPerformAction(currentParticipant.id, { type: "surrender" })}
+          onAction={handleActionClick}
+          disabled={false}
+        />
       )}
 
       {/* Game Control Buttons */}
