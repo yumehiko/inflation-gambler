@@ -1,4 +1,4 @@
-import { GameTableView } from './domains/blackjack/game-table/gameTable.view';
+import { UserDashboardView } from './domains/core/user-dashboard/userDashboard.view';
 
 function App() {
   return (
@@ -11,13 +11,8 @@ function App() {
         textAlign: 'center',
         margin: '2rem 0',
         color: '#fff',
-        position: 'absolute',
-        top: 0,
-        left: '50%',
-        transform: 'translateX(-50%)',
-        zIndex: 10,
       }}>Inflation Gambler</h1>
-      <GameTableView />
+      <UserDashboardView />
     </div>
   )
 }
