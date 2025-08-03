@@ -5,7 +5,7 @@ import type { ActionType } from './actionButtons.types';
 import type { ActionButtonsProps } from './actionButtons.types';
 
 const meta = {
-  title: 'Domains/Blackjack/ActionButtons',
+  title: 'Blackjack/ActionButtons',
   component: ActionButtonsView,
   parameters: {
     layout: 'centered',

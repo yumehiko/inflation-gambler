@@ -3,7 +3,7 @@ import { CardView } from './card.view'
 import type { Rank, Suit } from './card.types'
 
 const meta = {
-  title: 'Domains/Core/Card',
+  title: 'Core/Card',
   component: CardView,
   parameters: {
     layout: 'centered',

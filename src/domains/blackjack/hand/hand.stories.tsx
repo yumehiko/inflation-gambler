@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { HandView } from './hand.view';
 
 const meta: Meta<typeof HandView> = {
-  title: 'Domains/Blackjack/Hand',
+  title: 'Blackjack/Hand',
   component: HandView,
   parameters: {
     layout: 'centered',

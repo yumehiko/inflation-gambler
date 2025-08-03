@@ -7,7 +7,7 @@ import type { Card } from '../../core/card/card.types';
 import type { Hand } from '../hand/hand.types';
 
 const meta = {
-  title: 'Domains/Blackjack/Brain',
+  title: 'Blackjack/Brain',
   tags: ['autodocs'],
 } satisfies Meta;
 
