@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { createPlayer, isHuman, canAct, updatePlayerHand, placeBet, winBet, loseBet } from './player.utils';
+import { createPlayer, isHuman, canAct, updatePlayerHand, placeBet, requestBet, winBet, loseBet } from './player.utils';
 import { Player } from './player.types';
 import { Hand } from '../hand/hand.types';
 import { Brain } from '../brain/brain.types';
@@ -9,11 +9,13 @@ describe('player.utils', () => {
   const mockHumanBrain: Brain = {
     type: 'human',
     makeDecision: async () => 'stand',
+    decideBet: async () => 100,
   };
 
   const mockCpuBrain: Brain = {
     type: 'cpu-easy',
     makeDecision: async () => 'hit',
+    decideBet: async () => 50,
   };
 
   describe('createPlayer', () => {
@@ -133,6 +135,34 @@ describe('player.utils', () => {
     it('should throw error when bet is negative', () => {
       const player = createPlayer('player1', 'John', mockHumanBrain, 1000);
       expect(() => placeBet(player, -100)).toThrow('Invalid bet amount');
+    });
+  });
+
+  describe('requestBet', () => {
+    it('should call brain decideBet with correct context', async () => {
+      const mockBetAmount = 250;
+      const mockBrain: Brain = {
+        type: 'human',
+        makeDecision: async () => 'stand',
+        decideBet: async (context) => {
+          expect(context.chips).toBe(1000);
+          expect(context.minBet).toBe(10);
+          expect(context.maxBet).toBe(500);
+          return mockBetAmount;
+        },
+      };
+      
+      const player = createPlayer('player1', 'John', mockBrain, 1000);
+      const betAmount = await requestBet(player, 10, 500);
+      
+      expect(betAmount).toBe(mockBetAmount);
+    });
+
+    it('should work with CPU brain', async () => {
+      const player = createPlayer('cpu1', 'CPU', mockCpuBrain, 1000);
+      const betAmount = await requestBet(player, 10, 500);
+      
+      expect(betAmount).toBe(50); // mockCpuBrain returns 50
     });
   });
 

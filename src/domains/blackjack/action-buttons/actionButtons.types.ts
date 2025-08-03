@@ -1,5 +1,5 @@
 
-export type ActionType = 'hit' | 'stand' | 'double' | 'split' | 'surrender';
+export type ActionType = 'hit' | 'stand' | 'double' | 'split' | 'surrender' | 'insurance';
 
 export type ActionButtonsProps = {
   readonly participantId: string;

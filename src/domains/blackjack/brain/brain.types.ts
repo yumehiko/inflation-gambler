@@ -14,13 +14,26 @@ export type DecisionContext = {
   canInsurance: boolean;
 };
 
+export type BetContext = {
+  chips: number;
+  minBet: number;
+  maxBet: number;
+};
+
 export type Brain = {
   type: BrainType;
   makeDecision: (context: DecisionContext) => Promise<Decision>;
+  decideBet: (context: BetContext) => Promise<number>;
 };
 export type DecisionResolver = {
   waitForDecision: (context: DecisionContext) => Promise<Decision>;
 };
+
+export type BetResolver = {
+  waitForBet: (context: BetContext) => Promise<number>;
+};
+
+export type HumanResolver = DecisionResolver & BetResolver;
 
 export type DecisionHistory = {
   context: DecisionContext;

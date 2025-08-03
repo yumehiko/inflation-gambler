@@ -21,6 +21,7 @@ describe('brain.utils', () => {
     it('should create a human brain with correct type', async () => {
       const mockResolver = {
         waitForDecision: async () => 'stand' as Decision,
+        waitForBet: async () => 100,
       };
       const brain = createHumanBrain(mockResolver);
       expect(brain.type).toBe('human');
@@ -29,9 +30,19 @@ describe('brain.utils', () => {
     it('should have makeDecision function', () => {
       const mockResolver = {
         waitForDecision: async () => 'stand' as Decision,
+        waitForBet: async () => 100,
       };
       const brain = createHumanBrain(mockResolver);
       expect(typeof brain.makeDecision).toBe('function');
+    });
+
+    it('should have decideBet function', () => {
+      const mockResolver = {
+        waitForDecision: async () => 'stand' as Decision,
+        waitForBet: async () => 100,
+      };
+      const brain = createHumanBrain(mockResolver);
+      expect(typeof brain.decideBet).toBe('function');
     });
 
     it('should use resolver to get decision', async () => {
@@ -41,6 +52,7 @@ describe('brain.utils', () => {
           expect(ctx.hand.value).toBe(17);
           return mockDecision;
         },
+        waitForBet: async () => 100,
       };
       const brain = createHumanBrain(mockResolver);
       const context: DecisionContext = {
@@ -54,6 +66,22 @@ describe('brain.utils', () => {
       
       const decision = await brain.makeDecision(context);
       expect(decision).toBe(mockDecision);
+    });
+
+    it('should use resolver to get bet amount', async () => {
+      const mockBetAmount = 250;
+      const mockResolver = {
+        waitForDecision: async () => 'stand' as Decision,
+        waitForBet: async (ctx: { chips: number; minBet: number; maxBet: number }) => {
+          expect(ctx.chips).toBe(1000);
+          expect(ctx.minBet).toBe(10);
+          expect(ctx.maxBet).toBe(500);
+          return mockBetAmount;
+        },
+      };
+      const brain = createHumanBrain(mockResolver);
+      const betAmount = await brain.decideBet({ chips: 1000, minBet: 10, maxBet: 500 });
+      expect(betAmount).toBe(mockBetAmount);
     });
   });
 

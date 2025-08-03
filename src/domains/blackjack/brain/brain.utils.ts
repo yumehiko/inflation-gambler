@@ -1,9 +1,12 @@
-import type { Brain, Decision, DecisionContext, DecisionResolver } from './brain.types';
+import type { Brain, BetContext, Decision, DecisionContext, HumanResolver } from './brain.types';
 
-export const createHumanBrain = (resolver: DecisionResolver): Brain => ({
+export const createHumanBrain = (resolver: HumanResolver): Brain => ({
   type: 'human',
   makeDecision: async (context: DecisionContext): Promise<Decision> => {
     return resolver.waitForDecision(context);
+  },
+  decideBet: async (context: BetContext): Promise<number> => {
+    return resolver.waitForBet(context);
   },
 });
 

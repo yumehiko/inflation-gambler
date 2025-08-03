@@ -25,6 +25,7 @@ describe('PlayerView', () => {
     brain: {
       type: 'human',
       makeDecision: async () => 'stand',
+      decideBet: async () => 100,
     },
     chips: 1000,
     currentBet: 100,

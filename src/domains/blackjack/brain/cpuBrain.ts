@@ -1,4 +1,4 @@
-import type { Brain, BrainType, Decision, DecisionContext } from './brain.types';
+import type { Brain, BetContext, BrainType, Decision, DecisionContext } from './brain.types';
 import { getBasicStrategyDecision } from './basicStrategy';
 import { getAvailableDecisions } from './brain.utils';
 
@@ -28,6 +28,10 @@ export const createEasyCpuBrain = (): Brain => ({
     // Random choice for middle values
     return availableDecisions[Math.floor(Math.random() * availableDecisions.length)];
   },
+  decideBet: async (context: BetContext): Promise<number> => {
+    // Easy CPU always bets the minimum
+    return context.minBet;
+  },
 });
 
 /**
@@ -37,6 +41,14 @@ export const createNormalCpuBrain = (): Brain => ({
   type: 'cpu-normal',
   makeDecision: async (context: DecisionContext): Promise<Decision> => {
     return getBasicStrategyDecision(context);
+  },
+  decideBet: async (context: BetContext): Promise<number> => {
+    // Normal CPU bets 10-20% of chips
+    const betPercentage = 0.1 + Math.random() * 0.1;
+    const suggestedBet = Math.floor(context.chips * betPercentage);
+    
+    // Ensure bet is within limits
+    return Math.max(context.minBet, Math.min(suggestedBet, context.maxBet));
   },
 });
 
@@ -87,6 +99,23 @@ export const createHardCpuBrain = (rng: () => number = Math.random): Brain => ({
     
     // Otherwise follow basic strategy
     return getBasicStrategyDecision(context);
+  },
+  decideBet: async (context: BetContext): Promise<number> => {
+    // Hard CPU varies bet based on simulated count
+    const count = rng() * 2 - 1; // Range from -1 to 1
+    
+    // Bet more when count is high (favorable deck)
+    let betMultiplier: number;
+    if (count > 0.5) {
+      betMultiplier = 0.3; // Bet 30% of chips
+    } else if (count > 0) {
+      betMultiplier = 0.2; // Bet 20% of chips
+    } else {
+      betMultiplier = 0.1; // Bet 10% of chips
+    }
+    
+    const suggestedBet = Math.floor(context.chips * betMultiplier);
+    return Math.max(context.minBet, Math.min(suggestedBet, context.maxBet));
   },
 });
 

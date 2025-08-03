@@ -93,6 +93,18 @@ describe('cpuBrain', () => {
       // Should mostly stand on 20
       expect(standCount / iterations).toBeGreaterThan(0.7);
     });
+
+    it('should always bet minimum amount', async () => {
+      const brain = createEasyCpuBrain();
+      const betContext = {
+        chips: 1000,
+        minBet: 10,
+        maxBet: 500,
+      };
+      
+      const betAmount = await brain.decideBet(betContext);
+      expect(betAmount).toBe(10);
+    });
   });
 
   describe('createNormalCpuBrain', () => {
@@ -136,6 +148,44 @@ describe('cpuBrain', () => {
         canInsurance: false,
       };
       expect(await brain.makeDecision(context3)).toBe('split');
+    });
+
+    it('should bet 10-20% of chips', async () => {
+      const brain = createNormalCpuBrain();
+      const betContext = {
+        chips: 1000,
+        minBet: 10,
+        maxBet: 500,
+      };
+      
+      // Run multiple times to check range
+      for (let i = 0; i < 20; i++) {
+        const betAmount = await brain.decideBet(betContext);
+        expect(betAmount).toBeGreaterThanOrEqual(100); // 10% of 1000
+        expect(betAmount).toBeLessThanOrEqual(200); // 20% of 1000
+      }
+    });
+
+    it('should respect min and max bet limits', async () => {
+      const brain = createNormalCpuBrain();
+      
+      // Test minimum bet constraint
+      const lowChipsContext = {
+        chips: 50,
+        minBet: 10,
+        maxBet: 500,
+      };
+      const lowBet = await brain.decideBet(lowChipsContext);
+      expect(lowBet).toBeGreaterThanOrEqual(10);
+      
+      // Test maximum bet constraint
+      const highChipsContext = {
+        chips: 5000,
+        minBet: 10,
+        maxBet: 500,
+      };
+      const highBet = await brain.decideBet(highChipsContext);
+      expect(highBet).toBeLessThanOrEqual(500);
     });
   });
 
@@ -219,6 +269,50 @@ describe('cpuBrain', () => {
       // Should take insurance with very high count
       const decision = await brain.makeDecision(context);
       expect(decision).toBe('insurance');
+    });
+
+    it('should vary bet based on simulated count', async () => {
+      // Test with high count (favorable deck)
+      const highCountRng = vi.fn().mockReturnValue(0.8);
+      const highCountBrain = createHardCpuBrain(highCountRng);
+      
+      const betContext = {
+        chips: 1000,
+        minBet: 10,
+        maxBet: 500,
+      };
+      
+      const highCountBet = await highCountBrain.decideBet(betContext);
+      expect(highCountBet).toBe(300); // 30% of 1000
+      
+      // Test with medium positive count
+      const mediumCountRng = vi.fn().mockReturnValue(0.6); // count = 0.2
+      const mediumCountBrain = createHardCpuBrain(mediumCountRng);
+      
+      const mediumCountBet = await mediumCountBrain.decideBet(betContext);
+      expect(mediumCountBet).toBe(200); // 20% of 1000 (count = 0.2, which is > 0)
+      
+      // Test with low count (unfavorable deck)
+      const lowCountRng = vi.fn().mockReturnValue(-0.5);
+      const lowCountBrain = createHardCpuBrain(lowCountRng);
+      
+      const lowCountBet = await lowCountBrain.decideBet(betContext);
+      expect(lowCountBet).toBe(100); // 10% of 1000
+    });
+
+    it('should respect bet limits even with high count', async () => {
+      const highCountRng = vi.fn().mockReturnValue(0.9);
+      const brain = createHardCpuBrain(highCountRng);
+      
+      // Test with low maximum bet
+      const lowMaxContext = {
+        chips: 1000,
+        minBet: 10,
+        maxBet: 200,
+      };
+      
+      const bet = await brain.decideBet(lowMaxContext);
+      expect(bet).toBeLessThanOrEqual(200);
     });
   });
 

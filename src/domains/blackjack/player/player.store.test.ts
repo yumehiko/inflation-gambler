@@ -7,6 +7,7 @@ describe('player.store', () => {
   const mockBrain: Brain = {
     type: 'human',
     makeDecision: async () => 'stand',
+    decideBet: async () => 100,
   };
 
   beforeEach(() => {

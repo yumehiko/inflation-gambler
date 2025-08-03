@@ -1,6 +1,6 @@
 import { Player } from './player.types';
 import { Hand } from '../hand/hand.types';
-import { Brain } from '../brain/brain.types';
+import { Brain, BetContext } from '../brain/brain.types';
 
 export const createPlayer = (
   id: string,
@@ -55,6 +55,18 @@ export const placeBet = (player: Player, amount: number): Player => {
     currentBet: amount,
     chips: player.chips - amount,
   };
+};
+export const requestBet = async (
+  player: Player,
+  minBet: number,
+  maxBet: number
+): Promise<number> => {
+  const context: BetContext = {
+    chips: player.chips,
+    minBet,
+    maxBet,
+  };
+  return player.brain.decideBet(context);
 };
 
 export const winBet = (player: Player, payoutMultiplier: number): Player => {
