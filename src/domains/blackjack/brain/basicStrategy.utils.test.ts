@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getBasicStrategyDecision, createBasicStrategyTable } from './basicStrategy';
+import { getBasicStrategyDecision, createBasicStrategyTable } from './basicStrategy.utils';
 import type { Card } from '../../core/card/card.types';
 import type { Hand } from '../hand/hand.types';
 import type { DecisionContext } from './brain.types';

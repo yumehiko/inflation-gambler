@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
-import { createBasicStrategyTable } from './basicStrategy';
-import { createEasyCpuBrain, createNormalCpuBrain, createHardCpuBrain } from './cpuBrain';
+import { createBasicStrategyTable } from './basicStrategy.utils';
+import { createEasyCpuBrain, createNormalCpuBrain, createHardCpuBrain } from './cpuBrain.utils';
 import type { Decision, DecisionContext, Brain } from './brain.types';
 import type { Card } from '../../core/card/card.types';
 import type { Hand } from '../hand/hand.types';

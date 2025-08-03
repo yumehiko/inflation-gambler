@@ -1,5 +1,5 @@
 import type { Brain, BetContext, BrainType, Decision, DecisionContext } from './brain.types';
-import { getBasicStrategyDecision } from './basicStrategy';
+import { getBasicStrategyDecision } from './basicStrategy.utils';
 import { getAvailableDecisions } from './brain.utils';
 
 /**
