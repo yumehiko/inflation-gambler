@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useActionButtonsStore } from './actionButtons.store';
 import type { ActionButtonsProps, ActionType } from './actionButtons.types';
+import type { DecisionContext } from '../brain/brain.types';
 
 export const useActionButtons = (
   participantId: string,
@@ -32,5 +33,16 @@ export const useActionButtons = (
     onAction: handleAction,
     disabled: !isWaitingForAction,
     isWaitingForAction,
+  };
+};
+// API for non-React contexts (e.g., humanBrain.utils.ts)
+export const getActionButtonsAPI = () => {
+  const store = useActionButtonsStore.getState();
+  
+  return {
+    requestAction: (context: DecisionContext) => store.requestAction(context),
+    submitAction: (action: ActionType) => store.submitAction(action),
+    cancelAction: () => store.cancelAction(),
+    reset: () => store.reset(),
   };
 };

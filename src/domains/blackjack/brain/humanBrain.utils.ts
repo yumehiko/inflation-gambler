@@ -1,17 +1,17 @@
 import type { HumanResolver } from './brain.types';
-import { useBettingInputStore } from '../betting-input/bettingInput.store';
-import { useActionButtonsStore } from '../action-buttons/actionButtons.store';
+import { getBettingInputAPI } from '../betting-input/bettingInput.hook';
+import { getActionButtonsAPI } from '../action-buttons/actionButtons.hook';
 
 export const createHumanResolver = (): HumanResolver => {
-  const bettingInputStore = useBettingInputStore.getState();
-  const actionButtonsStore = useActionButtonsStore.getState();
+  const bettingInputAPI = getBettingInputAPI();
+  const actionButtonsAPI = getActionButtonsAPI();
 
   return {
     waitForDecision: (context) => {
-      return actionButtonsStore.requestAction(context);
+      return actionButtonsAPI.requestAction(context);
     },
     waitForBet: (context) => {
-      return bettingInputStore.requestBet(context);
+      return bettingInputAPI.requestBet(context);
     },
   };
 };

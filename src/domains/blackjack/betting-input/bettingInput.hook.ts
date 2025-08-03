@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useBettingInputStore } from './bettingInput.store';
 import type { BettingInputProps } from './bettingInput.types';
+import type { BetContext } from '../brain/brain.types';
 
 export const useBettingInput = (
   balance: number,
@@ -46,5 +47,16 @@ export const useBettingInput = (
     onBetChange: handleBetChange,
     onBetConfirm: handleBetConfirm,
     disabled: isDisabled || pendingBet === null,
+  };
+};
+// API for non-React contexts (e.g., humanBrain.utils.ts)
+export const getBettingInputAPI = () => {
+  const store = useBettingInputStore.getState();
+  
+  return {
+    requestBet: (context: BetContext) => store.requestBet(context),
+    submitBet: (amount: number) => store.submitBet(amount),
+    cancelBet: () => store.cancelBet(),
+    reset: () => store.reset(),
   };
 };

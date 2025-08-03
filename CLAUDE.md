@@ -60,6 +60,15 @@ Always use appropriate suffixes to clarify file responsibilities:
 - `.test.ts(x)` - Test files
 - `.module.css` - CSS Modules
 
+### State Management Rules
+- **Store Encapsulation**: Store files (`.store.ts`) are internal implementation details and MUST NOT be directly imported or accessed by external domains
+- **Hook as Public API**: All access to store functionality MUST go through the corresponding `.hook.ts` file
+- **Hook Responsibilities**:
+  - Provide React hooks for component integration (e.g., `useCounter`)
+  - Export non-React APIs for external domain access (e.g., `getCounterAPI()`)
+  - Act as the single public interface to the domain's state management
+- **Example**: If `humanBrain.utils.ts` needs to access `bettingInput` store functionality, it must import from `bettingInput.hook.ts`, not `bettingInput.store.ts`
+
 ## Code Navigation and Editing with Serena MCP
 
 ### ALWAYS use Serena MCP for efficient code exploration
