@@ -8,12 +8,7 @@ const meta: Meta<typeof HandView> = {
     layout: 'centered',
   },
   tags: ['autodocs'],
-  argTypes: {
-    label: {
-      control: 'text',
-      description: '手札のラベル（例：プレイヤー、ディーラー）',
-    },
-  },
+  argTypes: {},
 };
 
 export default meta;
@@ -81,7 +76,7 @@ export const Blackjack: Story = {
       isBust: false,
       isBlackjack: true,
     },
-    label: 'プレイヤー',
+
   },
 };
 
@@ -97,7 +92,7 @@ export const Bust: Story = {
       isBust: true,
       isBlackjack: false,
     },
-    label: 'ディーラー',
+
   },
 };
 
@@ -159,7 +154,7 @@ export const DealerInitialHand: Story = {
       isBust: false,
       isBlackjack: true,
     },
-    label: 'ディーラー',
+
   },
 };
 
@@ -204,6 +199,6 @@ export const HiddenBust: Story = {
       isBust: true,
       isBlackjack: false,
     },
-    label: 'ディーラー（裏向きカードで実はバースト）',
+
   },
 };

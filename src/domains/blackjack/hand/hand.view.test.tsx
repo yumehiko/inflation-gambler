@@ -37,7 +37,7 @@ describe('HandView', () => {
     expect(screen.getByText('15')).toBeInTheDocument();
   });
 
-  it('ソフトハンドの場合、両方の値を表示する', () => {
+  it('ソフトハンドの場合も単一の値を表示する', () => {
     const hand: Hand = {
       cards: [
         { suit: 'hearts', rank: 'A' },
@@ -51,10 +51,10 @@ describe('HandView', () => {
 
     render(<HandView hand={hand} />);
 
-    expect(screen.getByText('7 / 17')).toBeInTheDocument();
+    expect(screen.getByText('17')).toBeInTheDocument();
   });
 
-  it('ブラックジャックの場合、特別な表示をする', () => {
+  it('ブラックジャックの場合も通常の値を表示する', () => {
     const hand: Hand = {
       cards: [
         { suit: 'hearts', rank: 'A' },
@@ -67,10 +67,11 @@ describe('HandView', () => {
 
     render(<HandView hand={hand} />);
 
-    expect(screen.getByText('ブラックジャック!')).toBeInTheDocument();
+    expect(screen.getByText('21')).toBeInTheDocument();
+    expect(screen.queryByText('ブラックジャック!')).not.toBeInTheDocument();
   });
 
-  it('バーストの場合、特別な表示をする', () => {
+  it('バーストの場合も通常の値を表示する', () => {
     const hand: Hand = {
       cards: [
         { suit: 'hearts', rank: '10' },
@@ -84,7 +85,8 @@ describe('HandView', () => {
 
     render(<HandView hand={hand} />);
 
-    expect(screen.getByText('バースト!')).toBeInTheDocument();
+    expect(screen.getByText('24')).toBeInTheDocument();
+    expect(screen.queryByText('バースト!')).not.toBeInTheDocument();
   });
 
   it('空の手札の場合、「カードなし」と表示する', () => {
@@ -121,22 +123,8 @@ describe('HandView', () => {
     expect(screen.getByLabelText('5 of spades')).toBeInTheDocument();
   });
 
-  it('ラベルが提供された場合、表示する', () => {
-    const hand: Hand = {
-      cards: [
-        { suit: 'hearts', rank: '10' },
-      ],
-      value: 10,
-      isBust: false,
-      isBlackjack: false,
-    };
 
-    render(<HandView hand={hand} label="プレイヤー" />);
-
-    expect(screen.getByText('プレイヤー')).toBeInTheDocument();
-  });
-
-  it('裏向きのカードがある場合、値を「? + ?」形式で表示する', () => {
+  it('裏向きのカードがある場合、値を「?」形式で表示する', () => {
     const hand: Hand = {
       cards: [
         { suit: 'hearts', rank: '10', faceUp: true },
@@ -149,7 +137,7 @@ describe('HandView', () => {
 
     render(<HandView hand={hand} />);
 
-    expect(screen.getByText('10 + ?')).toBeInTheDocument();
+    expect(screen.getByText('10?')).toBeInTheDocument();
     expect(screen.getByLabelText('Face down card')).toBeInTheDocument();
   });
 
@@ -170,19 +158,5 @@ describe('HandView', () => {
     expect(screen.getAllByLabelText('Face down card')).toHaveLength(2);
   });
 
-  it('裏向きカードがある場合、ブラックジャックやバーストを表示しない', () => {
-    const hand: Hand = {
-      cards: [
-        { suit: 'hearts', rank: 'A', faceUp: true },
-        { suit: 'spades', rank: 'K', faceUp: false },
-      ],
-      value: 21,
-      isBust: false,
-      isBlackjack: true,
-    };
 
-    render(<HandView hand={hand} />);
-
-    expect(screen.queryByText('ブラックジャック!')).not.toBeInTheDocument();
-  });
 });
