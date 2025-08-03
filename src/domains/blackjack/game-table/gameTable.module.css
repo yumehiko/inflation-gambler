@@ -1,0 +1,38 @@
+.gameTable {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #0f172a;
+  color: #fff;
+  padding: 2rem;
+  gap: 2rem;
+}
+
+.dealerArea {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  background-color: rgba(30, 41, 59, 0.5);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.playerArea {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  background-color: rgba(30, 41, 59, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.actionArea {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100px;
+  padding: 1rem;
+}

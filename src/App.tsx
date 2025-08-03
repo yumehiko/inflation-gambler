@@ -1,14 +1,23 @@
+import { GameTableView } from './domains/blackjack/game-table/gameTable.view';
+
 function App() {
   return (
     <div style={{ 
       display: 'flex', 
       flexDirection: 'column',
-      justifyContent: 'center', 
-      alignItems: 'center', 
       minHeight: '100vh',
-      padding: '2rem'
     }}>
-      <h1>Inflation Gambler</h1>
+      <h1 style={{ 
+        textAlign: 'center',
+        margin: '2rem 0',
+        color: '#fff',
+        position: 'absolute',
+        top: 0,
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 10,
+      }}>Inflation Gambler</h1>
+      <GameTableView />
     </div>
   )
 }
