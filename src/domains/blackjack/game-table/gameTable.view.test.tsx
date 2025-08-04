@@ -26,6 +26,39 @@ vi.mock('../betting-input/bettingInput.view', () => ({
 import { useGameTable } from './gameTable.hook';
 
 describe('GameTableView', () => {
+  const mockPlayers = [
+    {
+      id: 'player-1',
+      name: 'Player 1',
+      brain: { 
+        type: 'human' as const,
+        makeDecision: vi.fn(),
+        decideBet: vi.fn(),
+      },
+      chips: 1000,
+      currentBet: 0,
+      hand: { cards: [], value: 0, isBust: false, isBlackjack: false },
+      isActive: false,
+      hasStood: false,
+      hasBusted: false,
+    },
+    {
+      id: 'player-2',
+      name: 'CPU Player',
+      brain: { 
+        type: 'cpu-normal' as const,
+        makeDecision: vi.fn(),
+        decideBet: vi.fn(),
+      },
+      chips: 1000,
+      currentBet: 0,
+      hand: { cards: [], value: 0, isBust: false, isBlackjack: false },
+      isActive: false,
+      hasStood: false,
+      hasBusted: false,
+    },
+  ];
+
   const mockActionButtonsProps = {
     participantId: 'player-1',
     canHit: true,
@@ -55,6 +88,7 @@ describe('GameTableView', () => {
   it('should render dealer and player views', () => {
     vi.mocked(useGameTable).mockReturnValue({
       phase: 'waiting',
+      players: mockPlayers,
       playerId: 'player-1',
       actionButtonsProps: mockActionButtonsProps,
       bettingInputProps: mockBettingInputProps,
@@ -65,12 +99,16 @@ describe('GameTableView', () => {
     render(<GameTableView />);
     
     expect(screen.getByTestId('dealer-view')).toBeInTheDocument();
-    expect(screen.getByTestId('player-view')).toBeInTheDocument();
+    const playerViews = screen.getAllByTestId('player-view');
+    expect(playerViews).toHaveLength(2);
+    expect(playerViews[0]).toHaveTextContent('player-1');
+    expect(playerViews[1]).toHaveTextContent('player-2');
   });
   
   it('should show betting input when in betting phase', () => {
     vi.mocked(useGameTable).mockReturnValue({
       phase: 'betting',
+      players: mockPlayers,
       playerId: 'player-1',
       actionButtonsProps: mockActionButtonsProps,
       bettingInputProps: mockBettingInputProps,
@@ -87,6 +125,7 @@ describe('GameTableView', () => {
   it('should show action buttons when in playing phase', () => {
     vi.mocked(useGameTable).mockReturnValue({
       phase: 'playing',
+      players: mockPlayers,
       playerId: 'player-1',
       actionButtonsProps: mockActionButtonsProps,
       bettingInputProps: mockBettingInputProps,
@@ -103,6 +142,7 @@ describe('GameTableView', () => {
   it('should not show any input controls when in other phases', () => {
     vi.mocked(useGameTable).mockReturnValue({
       phase: 'dealing',
+      players: mockPlayers,
       playerId: 'player-1',
       actionButtonsProps: mockActionButtonsProps,
       bettingInputProps: mockBettingInputProps,
@@ -119,6 +159,7 @@ describe('GameTableView', () => {
   it('should apply custom className', () => {
     vi.mocked(useGameTable).mockReturnValue({
       phase: 'waiting',
+      players: mockPlayers,
       playerId: 'player-1',
       actionButtonsProps: mockActionButtonsProps,
       bettingInputProps: mockBettingInputProps,

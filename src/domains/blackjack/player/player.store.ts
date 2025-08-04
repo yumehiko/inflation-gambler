@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { Player } from './player.types';
 import { Brain } from '../brain/brain.types';
-import { createPlayer, placeBet } from './player.utils';
+import { Card } from '../../core/card/card.types';
+import { createPlayer, placeBet, dealCard } from './player.utils';
 
 type PlayerStore = {
   players: Player[];
@@ -13,6 +14,7 @@ type PlayerStore = {
   setActivePlayer: (id: string | null) => void;
   updatePlayer: (id: string, updates: Partial<Player>) => void;
   placeBetForPlayer: (id: string, amount: number) => void;
+  dealCardToPlayer: (id: string, card: Card) => void;
   resetAllPlayers: () => void;
   
   // Selectors
@@ -71,6 +73,20 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
         // Handle insufficient chips or invalid bet silently
         return state;
       }
+    });
+  },
+
+  dealCardToPlayer: (id, card) => {
+    set((state) => {
+      const player = state.players.find((p) => p.id === id);
+      if (!player) return state;
+
+      const updatedPlayer = dealCard(player, card);
+      return {
+        players: state.players.map((p) =>
+          p.id === id ? updatedPlayer : p
+        ),
+      };
     });
   },
 

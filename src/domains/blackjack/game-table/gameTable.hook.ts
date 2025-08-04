@@ -32,6 +32,7 @@ export const useGameTable = () => {
   
   return {
     phase: currentPhase,
+    players, // すべてのプレイヤーを返す
     playerId,
     actionButtonsProps,
     bettingInputProps,

@@ -111,13 +111,13 @@ export const dealInitialCards = (game: GameFlow, dealer: Dealer, players: Player
     }
   }
 
-  // First card to dealer
+  // First card to dealer (face up)
   const dealerCard1 = deck.pop();
   if (dealerCard1) {
     const event: GameEvent = {
       type: 'card_dealt',
       receiverId: dealer.id,
-      card: dealerCard1,
+      card: { ...dealerCard1, faceUp: true },
       timestamp: Date.now(),
     };
     history.push(event);
@@ -178,6 +178,9 @@ export const checkBlackjacks = (game: GameFlow, _dealer: Dealer, players: Player
 
 export const processPlayerTurn = async (game: GameFlow, player: Player): Promise<GameFlow> => {
   const history = [...game.history];
+  
+  console.log(`processPlayerTurn called for player ${player.id} (${player.brain.type})`);
+  console.log('Player hand:', player.hand);
 
   // Get player decision
   const context = {

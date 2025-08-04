@@ -1,6 +1,8 @@
 import { Player } from './player.types';
 import { Hand } from '../hand/hand.types';
 import { Brain, BetContext } from '../brain/brain.types';
+import { Card } from '../../core/card/card.types';
+import { addCardToHand } from '../hand/hand.utils';
 
 export const createPlayer = (
   id: string,
@@ -86,5 +88,18 @@ export const loseBet = (player: Player): Player => {
   return {
     ...player,
     currentBet: 0,
+  };
+};
+
+/**
+ * Deal a card to the player
+ */
+export const dealCard = (player: Player, card: Card): Player => {
+  const newHand = addCardToHand(player.hand, card);
+  
+  return {
+    ...player,
+    hand: newHand,
+    hasBusted: newHand.isBust,
   };
 };

@@ -1,0 +1,31 @@
+.debug {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 12px;
+  max-width: 300px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 1000;
+}
+
+.debug h3 {
+  margin: 0 0 10px 0;
+  color: #ffd700;
+}
+
+.debug h4 {
+  margin: 15px 0 5px 0;
+  color: #87ceeb;
+}
+
+.playerDebug {
+  margin: 5px 0;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}

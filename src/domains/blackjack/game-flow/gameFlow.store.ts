@@ -105,13 +105,72 @@ export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
           // Collect bets from all players
           console.log('Collecting bets from players:', players);
           updatedGame = await collectBets(game, players);
+          
+          // Update player bets in the store
+          for (const player of players) {
+            const betEvent = updatedGame.history.find(
+              e => e.type === 'bet_placed' && e.playerId === player.id
+            );
+            if (betEvent && 'amount' in betEvent) {
+              playerStore.placeBetForPlayer(player.id, betEvent.amount);
+            }
+          }
+          
           // Deal initial cards
           updatedGame = dealInitialCards(updatedGame, dealer, players);
+          
+          // Update player and dealer hands in the stores
+          const cardEvents = updatedGame.history.filter(e => e.type === 'card_dealt');
+          console.log('Card events:', cardEvents);
+          
+          for (const event of cardEvents) {
+            if ('receiverId' in event && 'card' in event) {
+              console.log(`Dealing card to ${event.receiverId}:`, event.card);
+              if (event.receiverId === dealer.id) {
+                dealerStore.dealCardToDealer(event.card, !event.card.faceUp);
+              } else {
+                playerStore.dealCardToPlayer(event.receiverId, event.card);
+              }
+            }
+          }
+          
+          // Log updated player states
+          const updatedPlayers = playerStore.players;
+          console.log('Updated players after dealing:', updatedPlayers.map(p => ({
+            id: p.id,
+            hand: p.hand,
+            currentBet: p.currentBet
+          })));
+          
+          // Log updated dealer state
+          const updatedDealer = dealerStore.dealer;
+          console.log('Updated dealer after dealing:', updatedDealer);
+          
           // Check for blackjacks
           updatedGame = checkBlackjacks(updatedGame, dealer, players);
-          // Set phase to playing
-          updatedGame = { ...updatedGame, phase: 'playing', currentPlayerId: players[0]?.id || null };
+          // Set phase to playing and activate first player
+          const firstPlayerId = players[0]?.id || null;
+          updatedGame = { ...updatedGame, phase: 'playing', currentPlayerId: firstPlayerId };
+          
+          // Activate the first player
+          if (firstPlayerId) {
+            playerStore.setActivePlayer(firstPlayerId);
+          }
+          
           console.log('Betting phase complete, moved to playing');
+          
+          // If the first player is human, we need to trigger their turn
+          if (firstPlayerId) {
+            const firstPlayer = playerStore.players.find(p => p.id === firstPlayerId);
+            if (firstPlayer && firstPlayer.brain.type === 'human') {
+              console.log('First player is human, triggering processPlayerTurn');
+              // Process the turn immediately for human players
+              set({ game: updatedGame });
+              // Use setTimeout to avoid recursion
+              setTimeout(() => get().proceedToNextPhase(), 0);
+              return;
+            }
+          }
         }
         break;
 

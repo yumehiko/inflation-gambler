@@ -11,6 +11,10 @@ export const useActionButtons = (
   
   const isWaitingForAction = pendingAction !== null;
   
+  console.log('useActionButtons - participantId:', participantId);
+  console.log('useActionButtons - pendingAction:', pendingAction);
+  console.log('useActionButtons - isWaitingForAction:', isWaitingForAction);
+  
   const handleAction = useCallback((action: { type: ActionType }) => {
     if (pendingAction) {
       // Submit to store for humanBrain
