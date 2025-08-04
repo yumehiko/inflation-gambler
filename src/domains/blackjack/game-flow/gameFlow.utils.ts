@@ -67,16 +67,24 @@ export const startBettingPhase = (game: GameFlow): GameFlow => {
 
 export const collectBets = async (game: GameFlow, players: Player[]): Promise<GameFlow> => {
   const history = [...game.history];
+  console.log('collectBets called for players:', players.map(p => ({ id: p.id, name: p.name, brain: p.brain.type })));
 
   for (const player of players) {
-    const betAmount = await requestBet(player, 10, 500); // TODO: use game config for min/max
-    const event: GameEvent = {
-      type: 'bet_placed',
-      playerId: player.id,
-      amount: betAmount,
-      timestamp: Date.now(),
-    };
-    history.push(event);
+    console.log(`Requesting bet from player ${player.id} (${player.brain.type})`);
+    try {
+      const betAmount = await requestBet(player, 10, 500); // TODO: use game config for min/max
+      console.log(`Player ${player.id} bet amount: ${betAmount}`);
+      const event: GameEvent = {
+        type: 'bet_placed',
+        playerId: player.id,
+        amount: betAmount,
+        timestamp: Date.now(),
+      };
+      history.push(event);
+    } catch (error) {
+      console.error(`Error collecting bet from player ${player.id}:`, error);
+      throw error;
+    }
   }
 
   return {

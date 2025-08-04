@@ -18,7 +18,9 @@ export const useBettingInputStore = create<BettingInputStore>((set, get) => ({
   rejectBet: null,
   
   requestBet: (context: BetContext) => {
+    console.log('BettingInputStore.requestBet called with context:', context);
     return new Promise<number>((resolve, reject) => {
+      console.log('Setting pendingBet to:', context.minBet);
       set({
         pendingBet: context.minBet,
         resolveBet: resolve,

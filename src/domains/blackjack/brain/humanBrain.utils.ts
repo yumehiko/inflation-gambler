@@ -11,7 +11,10 @@ export const createHumanResolver = (): HumanResolver => {
       return actionButtonsAPI.requestAction(context);
     },
     waitForBet: (context) => {
-      return bettingInputAPI.requestBet(context);
+      console.log('humanBrain.waitForBet called with context:', context);
+      const result = bettingInputAPI.requestBet(context);
+      console.log('bettingInputAPI.requestBet returned promise');
+      return result;
     },
   };
 };

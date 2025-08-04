@@ -66,7 +66,10 @@ export const requestBet = async (
     minBet,
     maxBet,
   };
-  return player.brain.decideBet(context);
+  console.log(`requestBet: Player ${player.id} brain type: ${player.brain.type}`);
+  const betAmount = await player.brain.decideBet(context);
+  console.log(`requestBet: Player ${player.id} decided bet: ${betAmount}`);
+  return betAmount;
 };
 
 export const winBet = (player: Player, payoutMultiplier: number): Player => {

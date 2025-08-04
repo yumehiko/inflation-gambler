@@ -55,6 +55,8 @@ vi.mock('../player/player.store', () => ({
       ],
       activePlayerId: null,
       setActivePlayer: vi.fn(),
+      resetAllPlayers: vi.fn(),
+      addPlayer: vi.fn(),
     })),
   },
 }));
@@ -67,6 +69,7 @@ vi.mock('../dealer/dealer.store', () => ({
         hand: { cards: [], value: 0, soft: false },
         isShowingHoleCard: false,
       },
+      initializeDealer: vi.fn(),
     })),
   },
 }));

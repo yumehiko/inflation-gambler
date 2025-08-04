@@ -2,6 +2,7 @@ import type { User } from "./user.types";
 import type { Coin } from "../coin/coin.types";
 
 export const createUser = (name: string, coin: Coin): User => ({
+  id: 'user-1', // デフォルトのユーザーID
   name,
   coin,
 });

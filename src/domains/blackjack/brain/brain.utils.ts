@@ -1,14 +1,78 @@
 import type { Brain, BetContext, Decision, DecisionContext, HumanResolver } from './brain.types';
 
-export const createHumanBrain = (resolver: HumanResolver): Brain => ({
+export const createHumanBrain = (resolver?: HumanResolver): Brain => ({
   type: 'human',
   makeDecision: async (context: DecisionContext): Promise<Decision> => {
+    if (!resolver) {
+      throw new Error('Human resolver not provided');
+    }
     return resolver.waitForDecision(context);
   },
   decideBet: async (context: BetContext): Promise<number> => {
+    if (!resolver) {
+      throw new Error('Human resolver not provided');
+    }
     return resolver.waitForBet(context);
   },
 });
+
+export const createRandomBrain = (): Brain => {
+  return {
+    type: 'random',
+    makeDecision: async (context: DecisionContext): Promise<Decision> => {
+      const availableDecisions = getAvailableDecisions(context);
+      const randomIndex = Math.floor(Math.random() * availableDecisions.length);
+      return availableDecisions[randomIndex];
+    },
+    decideBet: async (context: BetContext): Promise<number> => {
+      const { minBet, maxBet, chips } = context;
+      const maxAffordable = Math.min(maxBet, chips);
+      const minAffordable = Math.min(minBet, chips);
+      
+      if (minAffordable > chips) {
+        return 0; // Can't afford minimum bet
+      }
+      
+      // Random bet between min and max affordable
+      return Math.floor(Math.random() * (maxAffordable - minAffordable + 1)) + minAffordable;
+    },
+  };
+};
+
+export const createBasicStrategyBrain = (): Brain => {
+  return {
+    type: 'basic',
+    makeDecision: async (context: DecisionContext): Promise<Decision> => {
+      const { hand, dealerUpCard } = context;
+      const playerTotal = hand.value;
+      const dealerValue = dealerUpCard.rank === 'A' ? 11 : 
+                          ['K', 'Q', 'J'].includes(dealerUpCard.rank) ? 10 : 
+                          parseInt(dealerUpCard.rank);
+      
+      // Basic blackjack strategy
+      if (hand.softValue !== undefined) {
+        // Soft hand strategy
+        if (playerTotal >= 19) return 'stand';
+        if (playerTotal === 18) {
+          return dealerValue >= 9 ? 'hit' : 'stand';
+        }
+        return 'hit';
+      } else {
+        // Hard hand strategy
+        if (playerTotal >= 17) return 'stand';
+        if (playerTotal >= 13 && dealerValue <= 6) return 'stand';
+        if (playerTotal === 12 && dealerValue >= 4 && dealerValue <= 6) return 'stand';
+        return 'hit';
+      }
+    },
+    decideBet: async (context: BetContext): Promise<number> => {
+      const { minBet, maxBet, chips } = context;
+      // Basic strategy: bet conservatively
+      const betAmount = Math.min(minBet * 2, maxBet, chips);
+      return betAmount;
+    },
+  };
+};
 
 export const isValidDecision = (decision: Decision, context: DecisionContext): boolean => {
   switch (decision) {

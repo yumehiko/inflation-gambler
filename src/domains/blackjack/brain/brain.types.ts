@@ -3,7 +3,7 @@ import type { Hand } from '../hand/hand.types';
 
 export type Decision = 'hit' | 'stand' | 'double' | 'split' | 'surrender' | 'insurance';
 
-export type BrainType = 'human' | 'cpu-easy' | 'cpu-normal' | 'cpu-hard';
+export type BrainType = 'human' | 'random' | 'basic' | 'cpu-easy' | 'cpu-normal' | 'cpu-hard';
 
 export type DecisionContext = {
   hand: Hand;

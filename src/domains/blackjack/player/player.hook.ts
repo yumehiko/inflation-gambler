@@ -43,3 +43,4 @@ export const usePlayer = (playerId: string) => {
     updateHand,
   };
 };
+export { usePlayerStore };

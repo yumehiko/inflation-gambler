@@ -19,6 +19,7 @@ export const Default: Story = {
     (Story) => {
       useUserStore.setState({
         user: {
+          id: 'user-1',
           name: 'Player 1',
           coin: createCoin(1000),
         },
@@ -33,6 +34,7 @@ export const HighRoller: Story = {
     (Story) => {
       useUserStore.setState({
         user: {
+          id: 'user-1',
           name: 'High Roller',
           coin: createCoin(999999),
         },
@@ -47,6 +49,7 @@ export const LowBalance: Story = {
     (Story) => {
       useUserStore.setState({
         user: {
+          id: 'user-1',
           name: 'Broke Player',
           coin: createCoin(10),
         },
@@ -61,6 +64,7 @@ export const LongName: Story = {
     (Story) => {
       useUserStore.setState({
         user: {
+          id: 'user-1',
           name: 'Very Long Player Name That Should Wrap',
           coin: createCoin(5000),
         },
