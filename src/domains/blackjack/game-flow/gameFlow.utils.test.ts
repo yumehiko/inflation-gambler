@@ -216,7 +216,13 @@ describe('gameFlow.utils', () => {
     it('should add busted event if player busts', async () => {
       const bustedPlayer = {
         ...mockPlayer,
-        hasBusted: true,
+        hand: {
+          cards: [],
+          value: 22,
+          softValue: undefined,
+          isBust: true,
+          isBlackjack: false,
+        },
       };
       const gameFlow = { ...createGameFlow(mockGameConfig), phase: 'playing' as const };
       

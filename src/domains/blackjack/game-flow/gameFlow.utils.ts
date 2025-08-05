@@ -4,6 +4,8 @@ import { Dealer } from '../dealer/dealer.types';
 import { Card } from '../../core/card/card.types';
 import { createDeck, shuffleDeck } from '../../core/deck/deck.utils';
 import { requestBet } from '../player/player.utils';
+import { calculateHandValue } from '../hand/hand.utils';
+import { Decision } from '../brain/brain.types';
 import { Hand } from '../hand/hand.types';
 
 // ゲーム初期化
@@ -176,38 +178,154 @@ export const checkBlackjacks = (game: GameFlow, _dealer: Dealer, players: Player
   };
 };
 
+export const applyPlayerAction = (
+  player: Player,
+  action: Decision,
+  deck: Card[]
+): { updatedPlayer: Player; updatedDeck: Card[]; actionComplete: boolean } => {
+  let updatedPlayer = { ...player };
+  const updatedDeck = [...deck];
+  let actionComplete = false;
+
+  switch (action) {
+    case 'hit': {
+      // Draw a card from the deck
+      if (updatedDeck.length > 0) {
+        const card = updatedDeck.shift()!;
+        updatedPlayer = {
+          ...updatedPlayer,
+          hand: {
+            ...updatedPlayer.hand,
+            cards: [...updatedPlayer.hand.cards, card],
+          },
+        };
+        // Recalculate hand value
+        const newValue = calculateHandValue(updatedPlayer.hand.cards);
+        updatedPlayer.hand.value = newValue;
+        updatedPlayer.hand.isBust = newValue > 21;
+        
+        // If player busts, turn is complete
+        if (updatedPlayer.hand.isBust) {
+          actionComplete = true;
+        }
+      }
+      break;
+    }
+    
+    case 'stand':
+      // Player stands, turn is complete
+      actionComplete = true;
+      break;
+      
+    case 'double': {
+      // Double the bet and draw exactly one card
+      updatedPlayer = {
+        ...updatedPlayer,
+        currentBet: updatedPlayer.currentBet * 2,
+        chips: updatedPlayer.chips - updatedPlayer.currentBet, // Deduct additional bet
+      };
+      
+      // Draw one card
+      if (updatedDeck.length > 0) {
+        const card = updatedDeck.shift()!;
+        updatedPlayer = {
+          ...updatedPlayer,
+          hand: {
+            ...updatedPlayer.hand,
+            cards: [...updatedPlayer.hand.cards, card],
+          },
+        };
+        // Recalculate hand value
+        const newValue = calculateHandValue(updatedPlayer.hand.cards);
+        updatedPlayer.hand.value = newValue;
+        updatedPlayer.hand.isBust = newValue > 21;
+      }
+      
+      // After doubling, turn is always complete
+      actionComplete = true;
+      break;
+    }
+    
+    case 'split':
+      // TODO: Implement split logic
+      console.warn('Split action not yet implemented');
+      actionComplete = true;
+      break;
+      
+    case 'surrender':
+      // TODO: Implement surrender logic
+      console.warn('Surrender action not yet implemented');
+      actionComplete = true;
+      break;
+      
+    case 'insurance':
+      // TODO: Implement insurance logic
+      console.warn('Insurance action not yet implemented');
+      break;
+  }
+
+  return { updatedPlayer, updatedDeck, actionComplete };
+};
 export const processPlayerTurn = async (game: GameFlow, player: Player): Promise<GameFlow> => {
   const history = [...game.history];
+  let deck = [...game.deck];
+  let currentPlayer = { ...player };
+  let turnComplete = false;
   
   console.log(`processPlayerTurn called for player ${player.id} (${player.brain.type})`);
   console.log('Player hand:', player.hand);
 
-  // Get player decision
-  const context = {
-    hand: player.hand,
-    dealerUpCard: { suit: 'spades', rank: 'A' } as Card, // TODO: get actual dealer up card
-    canDouble: true, // TODO: implement proper logic
-    canSplit: false, // TODO: implement proper logic
-    canSurrender: true, // TODO: implement proper logic
-    canInsurance: false, // TODO: implement proper logic
-    history: [],
-  };
+  while (!turnComplete && !currentPlayer.hand.isBust) {
+    // Get player decision
+    const context = {
+      hand: currentPlayer.hand,
+      dealerUpCard: { suit: 'spades', rank: 'A' } as Card, // TODO: get actual dealer up card
+      canDouble: currentPlayer.hand.cards.length === 2, // Can only double on first two cards
+      canSplit: false, // TODO: implement proper logic
+      canSurrender: currentPlayer.hand.cards.length === 2, // Can only surrender on first two cards
+      canInsurance: false, // TODO: implement proper logic
+      history: [],
+    };
 
-  const decision = await player.brain.makeDecision(context);
+    const decision = await currentPlayer.brain.makeDecision(context);
 
-  const actionEvent: GameEvent = {
-    type: 'player_action',
-    playerId: player.id,
-    action: decision,
-    timestamp: Date.now(),
-  };
-  history.push(actionEvent);
+    const actionEvent: GameEvent = {
+      type: 'player_action',
+      playerId: currentPlayer.id,
+      action: decision,
+      timestamp: Date.now(),
+    };
+    history.push(actionEvent);
+
+    // Apply the action
+    const { updatedPlayer, updatedDeck, actionComplete } = applyPlayerAction(
+      currentPlayer,
+      decision,
+      deck
+    );
+    
+    currentPlayer = updatedPlayer;
+    deck = updatedDeck;
+    turnComplete = actionComplete;
+
+    // If action was hit and resulted in a card being dealt, record it
+    if (decision === 'hit' && updatedPlayer.hand.cards.length > player.hand.cards.length) {
+      const newCard = updatedPlayer.hand.cards[updatedPlayer.hand.cards.length - 1];
+      const cardEvent: GameEvent = {
+        type: 'card_dealt',
+        receiverId: currentPlayer.id,
+        card: newCard,
+        timestamp: Date.now(),
+      };
+      history.push(cardEvent);
+    }
+  }
 
   // Check if player busted
-  if (player.hasBusted) {
+  if (currentPlayer.hand.isBust) {
     const bustEvent: GameEvent = {
       type: 'player_busted',
-      playerId: player.id,
+      playerId: currentPlayer.id,
       timestamp: Date.now(),
     };
     history.push(bustEvent);
@@ -215,9 +333,10 @@ export const processPlayerTurn = async (game: GameFlow, player: Player): Promise
 
   return {
     ...game,
+    deck,
     history,
   };
-};
+};;
 
 export const processDealerTurn = async (game: GameFlow): Promise<GameFlow> => {
   const event: GameEvent = {

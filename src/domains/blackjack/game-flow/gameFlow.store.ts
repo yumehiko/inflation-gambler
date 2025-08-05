@@ -159,18 +159,10 @@ export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
           
           console.log('Betting phase complete, moved to playing');
           
-          // If the first player is human, we need to trigger their turn
-          if (firstPlayerId) {
-            const firstPlayer = playerStore.players.find(p => p.id === firstPlayerId);
-            if (firstPlayer && firstPlayer.brain.type === 'human') {
-              console.log('First player is human, triggering processPlayerTurn');
-              // Process the turn immediately for human players
-              set({ game: updatedGame });
-              // Use setTimeout to avoid recursion
-              setTimeout(() => get().proceedToNextPhase(), 0);
-              return;
-            }
-          }
+          // Continue processing turns
+          set({ game: updatedGame });
+          // Recursively process the next phase
+          await get().proceedToNextPhase();
         }
         break;
 
@@ -186,11 +178,30 @@ export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
           if (currentPlayer) {
             updatedGame = await processPlayerTurn(game, currentPlayer);
             
+            // Update player hand in the store based on game events
+            const playerEvents = updatedGame.history.filter(
+              e => (e.type === 'card_dealt' && 'receiverId' in e && e.receiverId === currentPlayer.id) ||
+                   (e.type === 'player_action' && 'playerId' in e && e.playerId === currentPlayer.id)
+            );
+            
+            // Apply card dealt events to update player's hand
+            for (const event of playerEvents) {
+              if (event.type === 'card_dealt' && 'card' in event) {
+                playerStore.dealCardToPlayer(currentPlayer.id, event.card);
+              }
+            }
+            
             // Check if there are more players
             const nextPlayerId = getNextPlayer(updatedGame);
             if (nextPlayerId) {
               updatedGame = { ...updatedGame, currentPlayerId: nextPlayerId };
               playerStore.setActivePlayer(nextPlayerId);
+              
+              // Continue to next player's turn
+              set({ game: updatedGame });
+              // Recursively process the next phase
+              await get().proceedToNextPhase();
+              return;
             } else {
               // All players done, move to dealer turn
               updatedGame = await processDealerTurn(updatedGame);
