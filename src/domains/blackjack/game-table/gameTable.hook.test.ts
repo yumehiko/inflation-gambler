@@ -34,6 +34,7 @@ describe('useGameTable', () => {
       resetGame: vi.fn(),
       isGameComplete: false,
       currentPhase: 'betting',
+      getEventEmitter: vi.fn(),
     });
     
     const mockActionButtonsProps = {
@@ -77,6 +78,7 @@ describe('useGameTable', () => {
       resetGame: vi.fn(),
       isGameComplete: false,
       currentPhase: 'playing',
+      getEventEmitter: vi.fn(),
     });
     
     const mockActionButtonsProps = {
@@ -124,6 +126,7 @@ describe('useGameTable', () => {
       resetGame: vi.fn(),
       isGameComplete: false,
       currentPhase: 'dealing',
+      getEventEmitter: vi.fn(),
     });
     
     const mockActionButtonsProps = {

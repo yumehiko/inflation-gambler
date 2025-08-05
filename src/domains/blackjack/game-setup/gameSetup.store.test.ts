@@ -102,6 +102,7 @@ describe('gameSetup.store', () => {
         startNewGame: vi.fn(),
         getCurrentPhase: vi.fn(),
         proceedGame: vi.fn(),
+        getEventEmitter: vi.fn(),
       };
       
       const { getGameFlowAPI } = await import('../game-flow/gameFlow.hook');

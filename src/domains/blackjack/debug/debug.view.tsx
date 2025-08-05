@@ -1,6 +1,6 @@
 import { useGameFlow } from '../game-flow/gameFlow.hook';
-import { usePlayerStore } from '../player/player.store';
-import { useDealerStore } from '../dealer/dealer.store';
+import { usePlayerStore } from '../player/player.hook';
+import { useDealerStore } from '../dealer/dealer.hook';
 import styles from './debug.module.css';
 
 export const DebugView = () => {

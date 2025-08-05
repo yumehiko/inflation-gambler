@@ -43,4 +43,14 @@ export const usePlayer = (playerId: string) => {
     updateHand,
   };
 };
+// External API for non-React code
+export const getPlayerAPI = () => {
+  const store = usePlayerStore.getState();
+  return {
+    dealCardToPlayer: store.dealCardToPlayer,
+    updatePlayer: store.updatePlayer,
+    getPlayerById: store.getPlayerById,
+  };
+};
+
 export { usePlayerStore };

@@ -5,7 +5,7 @@
 ### ALWAYS
 - Write tests BEFORE implementation (TDD)
 - Create Storybook tests for UI components
-- Run before ANY commit: `npm run lint && npm run typecheck && npm run test`
+- Run before ANY commit: `npm run lint && npm run typecheck && npm run test && npm run analyze:deps`
 - Use TypeScript strict mode
 
 ## Architecture

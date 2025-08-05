@@ -20,3 +20,15 @@ export const useDealer = () => {
     reset: resetDealer,
   };
 };
+
+// External API for non-React code  
+export const getDealerAPI = () => {
+  const store = useDealerStore.getState();
+  return {
+    dealCardToDealer: store.dealCardToDealer,
+    revealDealerHoleCard: store.revealDealerHoleCard,
+    resetDealer: store.resetDealer,
+  };
+};
+
+export { useDealerStore };

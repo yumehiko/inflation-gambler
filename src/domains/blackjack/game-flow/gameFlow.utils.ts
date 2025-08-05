@@ -204,6 +204,7 @@ export const applyPlayerAction = (
         updatedPlayer.hand.value = newValue;
         updatedPlayer.hand.isBust = newValue > 21;
         
+        
         // If player busts, turn is complete
         if (updatedPlayer.hand.isBust) {
           actionComplete = true;
@@ -239,6 +240,7 @@ export const applyPlayerAction = (
         const newValue = calculateHandValue(updatedPlayer.hand.cards);
         updatedPlayer.hand.value = newValue;
         updatedPlayer.hand.isBust = newValue > 21;
+        
       }
       
       // After doubling, turn is always complete

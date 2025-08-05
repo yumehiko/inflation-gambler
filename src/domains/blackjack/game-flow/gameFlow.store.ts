@@ -18,11 +18,15 @@ import {
   settleGame,
   getNextPlayer,
 } from './gameFlow.utils';
+import { GameFlowEventEmitter } from './gameFlowEvents.types';
+import { createEventEmitter } from './gameFlowEvents.utils';
+import { mapGameEventToFlowEvent } from './gameFlowEventMapper.utils';
 
 import { GamePhase } from './gameFlow.types';
 
 type GameFlowStore = {
   game: GameFlow | null;
+  eventEmitter: GameFlowEventEmitter;
   
   // ゲーム管理
   initializeGame: (config: GameConfig) => void;
@@ -39,10 +43,14 @@ type GameFlowStore = {
   
   // 開発・テスト用
   setPhase: (phase: GamePhase) => void;
+  
+  // イベントAPI
+  getEventEmitter: () => GameFlowEventEmitter;
 };
 
 export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
   game: null,
+  eventEmitter: createEventEmitter(),
 
   initializeGame: (config) => {
     // GameFlowを作成
@@ -60,6 +68,10 @@ export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
     // ディーラーストアを初期化
     const dealerStore = useDealerStore.getState();
     dealerStore.initializeDealer();
+    
+    // イベントリスナーを開始
+    playerStore.startListeningToEvents();
+    dealerStore.startListeningToEvents();
     
     // GameFlowを設定
     set({ game: newGame });
@@ -106,31 +118,31 @@ export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
           console.log('Collecting bets from players:', players);
           updatedGame = await collectBets(game, players);
           
-          // Update player bets in the store
+          // Emit bet placed events
+          const emitter = get().eventEmitter;
           for (const player of players) {
             const betEvent = updatedGame.history.find(
               e => e.type === 'bet_placed' && e.playerId === player.id
             );
-            if (betEvent && 'amount' in betEvent) {
-              playerStore.placeBetForPlayer(player.id, betEvent.amount);
+            if (betEvent) {
+              const flowEvent = mapGameEventToFlowEvent(betEvent);
+              if (flowEvent) {
+                emitter.emit(flowEvent);
+              }
             }
           }
           
           // Deal initial cards
           updatedGame = dealInitialCards(updatedGame, dealer, players);
           
-          // Update player and dealer hands in the stores
+          // Emit card dealt events
           const cardEvents = updatedGame.history.filter(e => e.type === 'card_dealt');
           console.log('Card events:', cardEvents);
           
           for (const event of cardEvents) {
-            if ('receiverId' in event && 'card' in event) {
-              console.log(`Dealing card to ${event.receiverId}:`, event.card);
-              if (event.receiverId === dealer.id) {
-                dealerStore.dealCardToDealer(event.card, !event.card.faceUp);
-              } else {
-                playerStore.dealCardToPlayer(event.receiverId, event.card);
-              }
+            const flowEvent = mapGameEventToFlowEvent(event);
+            if (flowEvent) {
+              emitter.emit(flowEvent);
             }
           }
           
@@ -174,20 +186,23 @@ export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
 
       case 'playing':
         if (game.currentPlayerId) {
-          const currentPlayer = players.find(p => p.id === game.currentPlayerId);
-          if (currentPlayer) {
-            updatedGame = await processPlayerTurn(game, currentPlayer);
+          // Get the latest player state from the store
+          const latestPlayer = playerStore.getPlayerById(game.currentPlayerId);
+          if (latestPlayer) {
+            // Record the history length before processing the turn
+            const historyLengthBeforeTurn = game.history.length;
             
-            // Update player hand in the store based on game events
-            const playerEvents = updatedGame.history.filter(
-              e => (e.type === 'card_dealt' && 'receiverId' in e && e.receiverId === currentPlayer.id) ||
-                   (e.type === 'player_action' && 'playerId' in e && e.playerId === currentPlayer.id)
-            );
+            updatedGame = await processPlayerTurn(game, latestPlayer);
             
-            // Apply card dealt events to update player's hand
-            for (const event of playerEvents) {
-              if (event.type === 'card_dealt' && 'card' in event) {
-                playerStore.dealCardToPlayer(currentPlayer.id, event.card);
+            // Only process NEW events added during this turn
+            const newEvents = updatedGame.history.slice(historyLengthBeforeTurn);
+            
+            // Emit events to listeners
+            const emitter = get().eventEmitter;
+            for (const event of newEvents) {
+              const flowEvent = mapGameEventToFlowEvent(event);
+              if (flowEvent) {
+                emitter.emit(flowEvent);
               }
             }
             
@@ -247,12 +262,36 @@ export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
       throw new Error('Player not found');
     }
 
+    // Record the history length before processing the turn
+    const historyLengthBeforeTurn = game.history.length;
+
     // Process the player turn with the action
     const updatedGame = await processPlayerTurn(game, player);
+    
+    // Only process NEW events added during this turn
+    const newEvents = updatedGame.history.slice(historyLengthBeforeTurn);
+    
+    // Emit events to listeners
+    const emitter = get().eventEmitter;
+    for (const event of newEvents) {
+      const flowEvent = mapGameEventToFlowEvent(event);
+      if (flowEvent) {
+        emitter.emit(flowEvent);
+      }
+    }
+    
     set({ game: updatedGame });
   },
 
   resetGame: () => {
+    // イベントリスナーを停止
+    const playerStore = usePlayerStore.getState();
+    const dealerStore = useDealerStore.getState();
+    
+    playerStore.stopListeningToEvents();
+    dealerStore.stopListeningToEvents();
+    
+    // ゲームをリセット
     set({ game: null });
   },
 
@@ -264,5 +303,9 @@ export const useGameFlowStore = create<GameFlowStore>((set, get) => ({
     
     // 開発・テスト用：フェーズを直接設定
     set({ game: { ...game, phase } });
+  },
+
+  getEventEmitter: () => {
+    return get().eventEmitter;
   },
 }));

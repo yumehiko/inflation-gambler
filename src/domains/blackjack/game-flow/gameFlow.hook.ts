@@ -9,6 +9,7 @@ export const useGameFlow = () => {
     proceedToNextPhase,
     handlePlayerAction,
     resetGame,
+    getEventEmitter,
   } = useGameFlowStore();
 
   const isGameComplete = game?.phase === 'finished' || false;
@@ -23,6 +24,7 @@ export const useGameFlow = () => {
     resetGame,
     isGameComplete,
     currentPhase,
+    getEventEmitter,
   };
 };
 
@@ -40,6 +42,9 @@ export const getGameFlowAPI = () => {
     },
     proceedGame: async (): Promise<void> => {
       await store.proceedToNextPhase();
+    },
+    getEventEmitter: () => {
+      return store.getEventEmitter();
     },
   };
 };
